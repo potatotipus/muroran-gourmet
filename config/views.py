@@ -4,6 +4,6 @@ from django.views.generic import TemplateView
 
 
 class HomeView(TemplateView):
-    """初期構築段階のトップ画面。"""
+    """アプリ全体の公開トップ画面。"""
 
     template_name = 'home.html'

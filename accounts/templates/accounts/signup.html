@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}新規登録 | むろらんグルメマップ{% endblock %}
+
+{% block content %}
+<section class="account-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'home' %}">← トップへ</a>
+  <p class="eyebrow">03 / SIGN UP</p>
+  <h1 id="page-title" class="page-title">アカウントを作成</h1>
+  <p class="page-intro">あなたの街に、まだ知らないおいしさを。</p>
+  <form method="post" class="account-form" novalidate>
+    {% csrf_token %}
+    {% include 'accounts/includes/form_fields.html' %}
+    <button class="button button-primary" type="submit">登録する<span aria-hidden="true">→</span></button>
+  </form>
+  <p class="account-link">登録済みの方は <a href="{% url 'accounts:login' %}">ログイン</a></p>
+</section>
+{% endblock %}

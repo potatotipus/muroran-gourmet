@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ page_title }} | むろらんグルメマップ{% endblock %}
+
+{% block content %}
+<section class="selection-page placeholder-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'accounts:choose' %}">← 探し方の選択へ</a>
+  <p class="eyebrow">{{ screen_number }} / COMING SOON</p>
+  <h1 id="page-title" class="page-title">{{ page_title }}</h1>
+  <p class="page-intro">{{ description }}</p>
+  <div class="placeholder-notice">
+    <span class="status-label">準備中</span>
+    <p>{{ notice }}</p>
+    <p>公開まで、もうしばらくお待ちください。</p>
+  </div>
+  <a class="button button-search" href="{% url 'accounts:choose' %}">探し方の選択に戻る<span aria-hidden="true">→</span></a>
+</section>
+{% endblock %}
