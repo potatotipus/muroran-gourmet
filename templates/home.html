@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block title %}むろらんグルメマップ | 室蘭のおいしい発見{% endblock %}
+
+{% block content %}
+<section class="welcome" aria-labelledby="welcome-title">
+  <div class="welcome-copy">
+    <p class="eyebrow"><span aria-hidden="true"></span> 北海道・室蘭のおいしい発見</p>
+    <h1 id="welcome-title">むろらん<br>グルメマップ<span class="title-dot">。</span></h1>
+    <p class="catchphrase">食べて、歩いて、<br>もっと室蘭が好きになる。</p>
+    <p class="introduction">いつもの街にも、まだ知らないおいしさがある。<br class="desktop-break">次に行きたいお店を見つける、小さなきっかけに。</p>
+    <div class="welcome-actions" aria-describedby="account-notice">
+      <button class="button button-primary" type="button" disabled>ログイン<span>準備中</span></button>
+      <button class="button button-secondary" type="button" disabled>新規登録<span>準備中</span></button>
+    </div>
+    <p id="account-notice" class="notice">ただいま準備中です。ログイン・新規登録はまだご利用いただけません。</p>
+  </div>
+  <div class="welcome-art" aria-hidden="true">
+    <div class="art-grid"></div>
+    <div class="map-road road-one"></div>
+    <div class="map-road road-two"></div>
+    <div class="map-road road-three"></div>
+    <span class="map-block block-one"></span>
+    <span class="map-block block-two"></span>
+    <span class="map-block block-three"></span>
+    <span class="map-pin pin-one"><span></span></span>
+    <span class="map-pin pin-two"><span></span></span>
+    <div class="plate"><div class="plate-inner"><span class="noodle"></span><span class="topping"></span><span class="garnish"></span></div></div>
+    <span class="chopstick chopstick-one"></span><span class="chopstick chopstick-two"></span>
+    <span class="art-caption">おいしい出会いは、すぐそばに。</span>
+    <span class="art-coordinate">42° N &nbsp; 140° E</span>
+  </div>
+</section>
+<section class="about" aria-labelledby="about-title">
+  <span class="section-number" aria-hidden="true">01 / ABOUT</span>
+  <div>
+    <h2 id="about-title">この街を、ひとくちずつ。</h2>
+    <p>気になる一軒から、街の新しい魅力を。<br>室蘭のお店と、そこに集う人をつなぐグルメマップをつくっています。</p>
+  </div>
+  <span class="area-label">室蘭をもっと好きになる</span>
+</section>
+{% endblock %}
