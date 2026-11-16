@@ -1,5 +1,5 @@
 <section id="reviews" class="reviews-section" aria-labelledby="reviews-title">
-  <div class="page-heading"><div><h2 id="reviews-title">みんなの口コミ</h2><p>{% if restaurant.avg_rating %}平均評価 <strong>{{ restaurant.avg_rating|floatformat:1 }}</strong> / 5（{{ restaurant.review_count }}件）{% else %}未評価{% endif %}</p></div><a class="button button-orange" href="{% url 'community:review_create' restaurant.pk %}">口コミを投稿する</a></div>
+  <div class="page-heading"><div><h2 id="reviews-title">みんなの口コミ</h2><p>{% if restaurant.avg_rating %}平均評価 <strong>{{ restaurant.avg_rating|floatformat:1 }}</strong> / 5（{{ restaurant.review_count }}件）{% else %}未評価{% endif %}</p></div><a class="button button-orange" href="{% url 'community:review_create' restaurant.pk %}?next={{ detail_return|urlencode }}">口コミを書く</a></div>
   {% for review in reviews %}
   <article class="review-card"><h3>{{ review.user.get_short_name|default:review.user.username }}</h3><p class="review-stars" aria-label="{{ review.rating }}点 / 5点">{{ review.stars }}</p><div>{{ review.comment|linebreaks }}</div>
     <p class="field-help">投稿：{{ review.created_at|date:'Y/m/d H:i' }}{% if review.edited_at %} / 編集：{{ review.edited_at|date:'Y/m/d H:i' }}{% endif %}</p>

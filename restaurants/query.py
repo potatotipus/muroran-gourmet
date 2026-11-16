@@ -3,6 +3,7 @@
 from django.db.models import Avg, BooleanField, Count, Exists, OuterRef, Q, Value
 
 from community.models import Favorite
+from visits.models import Visit
 from .models import Restaurant, Tag
 
 
@@ -11,8 +12,12 @@ def restaurant_queryset(user=None):
         avg_rating=Avg('reviews__rating'), review_count=Count('reviews', distinct=True),
     )
     if user and user.is_authenticated:
-        return queryset.annotate(is_favorite=Exists(Favorite.objects.filter(user=user, restaurant=OuterRef('pk'))))
-    return queryset.annotate(is_favorite=Value(False, output_field=BooleanField()))
+        return queryset.annotate(
+            is_favorite=Exists(Favorite.objects.filter(user=user, restaurant=OuterRef('pk'))),
+            is_visited=Exists(Visit.objects.filter(user=user, restaurant=OuterRef('pk'))),
+        )
+    return queryset.annotate(is_favorite=Value(False, output_field=BooleanField()),
+                             is_visited=Value(False, output_field=BooleanField()))
 
 
 def filter_restaurants(form, user=None):

@@ -1,11 +1,11 @@
 <nav class="bottom-nav" aria-label="メインナビゲーション">
-  <a class="nav-item" href="{% url 'accounts:choose' %}"{% if request.resolver_match.url_name == 'choose' or request.resolver_match.namespace == 'restaurants' or request.resolver_match.namespace == 'community' and request.resolver_match.url_name != 'favorites' %} aria-current="page"{% endif %}>
+  <a class="nav-item" href="{% url 'accounts:choose' %}"{% if request.resolver_match.url_name == 'choose' or request.resolver_match.url_name == 'home' or request.resolver_match.namespace == 'restaurants' or request.resolver_match.namespace == 'community' and request.resolver_match.url_name != 'favorites' %} aria-current="page"{% endif %}>
     <span class="nav-icon" aria-hidden="true">⌂</span><span>ホーム</span>
   </a>
   <a class="nav-item" href="{% url 'maps:search' %}"{% if request.resolver_match.namespace == 'maps' %} aria-current="page"{% endif %}>
     <span class="nav-icon" aria-hidden="true">⌖</span><span>地図</span>
   </a>
-  <span class="nav-item is-disabled" aria-disabled="true"><span class="nav-icon" aria-hidden="true">▧</span><span>スタンプ</span><small>準備中</small></span>
+  <a class="nav-item" href="{% url 'visits:stamps' %}"{% if request.resolver_match.namespace == 'visits' %} aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true">▧</span><span>スタンプ</span></a>
   <a class="nav-item" href="{% url 'community:favorites' %}"{% if request.resolver_match.url_name == 'favorites' %} aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true">♡</span><span>お気に入り</span></a>
-  <span class="nav-item is-disabled" aria-disabled="true"><span class="nav-icon" aria-hidden="true">♙</span><span>マイページ</span><small>準備中</small></span>
+  <a class="nav-item" href="{% url 'accounts:profile' %}"{% if request.resolver_match.url_name == 'profile' or request.resolver_match.url_name == 'profile_edit' %} aria-current="page"{% endif %}><span class="nav-icon" aria-hidden="true">♙</span><span>マイページ</span></a>
 </nav>

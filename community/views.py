@@ -9,7 +9,7 @@ from django.utils import timezone
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
-from config.http import redirect_back
+from config.http import local_destination, redirect_back
 from restaurants.models import Restaurant
 from .forms import ReportForm, ReviewForm, StateActionForm
 from .models import Favorite, Review
@@ -27,7 +27,10 @@ def review_create(request, restaurant_pk):
         review.save()
         messages.success(request, '口コミを投稿しました。')
         return redirect_back(request, restaurant.get_absolute_url())
-    return render(request, 'community/review_form.html', {'form': form, 'restaurant': restaurant, 'editing': False})
+    return render(request, 'community/review_form.html', {
+        'form': form, 'restaurant': restaurant, 'editing': False,
+        'return_url': local_destination(request, request.POST.get('next') or request.GET.get('next'), restaurant.get_absolute_url()),
+    })
 
 
 @never_cache
@@ -41,7 +44,10 @@ def review_edit(request, pk):
         review.save()
         messages.success(request, '口コミを更新しました。')
         return redirect_back(request, review.restaurant.get_absolute_url())
-    return render(request, 'community/review_form.html', {'form': form, 'restaurant': review.restaurant, 'editing': True})
+    return render(request, 'community/review_form.html', {
+        'form': form, 'restaurant': review.restaurant, 'editing': True,
+        'return_url': local_destination(request, request.POST.get('next') or request.GET.get('next'), review.restaurant.get_absolute_url()),
+    })
 
 
 @never_cache

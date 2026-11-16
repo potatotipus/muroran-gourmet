@@ -7,6 +7,7 @@
   <div class="page-heading">
     <div><p class="eyebrow">06 / RESTAURANTS</p><h1 class="page-title" id="page-title">店舗一覧</h1><p class="page-intro">気になる一軒を、見つけよう。</p></div>
     <a class="button filter-link" href="{% url 'restaurants:filters' %}{% if query_string %}?{{ query_string }}{% endif %}">条件で絞り込む <span aria-hidden="true">↗</span></a>
+    <a class="button filter-link" href="{% url 'maps:search' %}{% if query_string %}?{{ query_string }}{% endif %}">地図で見る</a>
   </div>
   {% url 'restaurants:list' as search_action %}{% include 'restaurants/includes/search_form.html' %}
   {% if query_string %}

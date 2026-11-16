@@ -2,9 +2,10 @@
 {% block title %}口コミ{% if editing %}編集{% else %}投稿{% endif %} | むろらんグルメマップ{% endblock %}
 {% block content %}
 <section class="account-page review-page" aria-labelledby="page-title">
-  <a class="back-link" href="{{ restaurant.get_absolute_url }}">← 店舗詳細へ</a>
+  <a class="back-link" href="{{ return_url }}">← 戻る</a>
   <p class="eyebrow">12 / REVIEW</p><h1 id="page-title" class="page-title">口コミを{% if editing %}編集{% else %}投稿{% endif %}</h1><p>{{ restaurant.name }}</p>
   <form method="post" class="account-form">{% csrf_token %}
+    <input type="hidden" name="next" value="{{ return_url }}">
     {% include 'accounts/includes/form_fields.html' %}
     <button class="button button-orange" type="submit">{% if editing %}更新する{% else %}投稿する{% endif %}</button>
   </form>

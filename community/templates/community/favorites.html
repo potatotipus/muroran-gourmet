@@ -2,6 +2,7 @@
 {% block title %}お気に入り | むろらんグルメマップ{% endblock %}
 {% block content %}
 <section class="restaurant-page activity-page"><p class="eyebrow">14 / FAVORITES</p><h1 class="page-title">お気に入りのお店</h1><p class="result-count"><strong>{{ result_count }}</strong> 件のお気に入り</p>
+  <div class="activity-links"><a href="{% url 'maps:personal' %}?mode=favorites">自分のマップで見る</a><a href="{% url 'accounts:profile' %}">マイページへ</a></div>
   <div class="restaurant-grid">{% for restaurant in restaurants %}{% include 'restaurants/includes/card.html' %}{% empty %}<div class="empty-results"><h2>お気に入りはまだありません。</h2><p>気になるお店を見つけたら、お気に入りに追加してみましょう。</p><a href="{% url 'restaurants:genres' %}">お店を探す</a></div>{% endfor %}</div>
 </section>
 {% endblock %}

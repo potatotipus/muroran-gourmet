@@ -3,6 +3,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, render
 from django.views.decorators.cache import never_cache
+from django.urls import reverse
+from urllib.parse import urlencode
 
 from .forms import RestaurantSearchForm
 from .models import Genre
@@ -38,7 +40,19 @@ def filters(request):
 def detail(request, pk):
     restaurant = get_object_or_404(restaurant_queryset(request.user), pk=pk)
     form = RestaurantSearchForm(request.GET)
+    source = request.GET.get('source')
+    back_url, back_label = reverse('restaurants:list'), '検索結果に戻る'
+    back_query = form.query_string
+    if source == 'map':
+        back_url, back_label = reverse('maps:search'), '地図に戻る'
+    elif source == 'personal':
+        back_url, back_label = reverse('maps:personal'), '自分のマップに戻る'
+        mode = request.GET.get('mode')
+        back_query = urlencode({'mode': mode}) if mode in ['favorites', 'visited'] else ''
+    if back_query:
+        back_url += '?' + back_query
     return render(request, 'restaurants/detail.html', {
         'restaurant': restaurant, 'query_string': form.query_string,
         'reviews': restaurant.reviews.select_related('user').all(),
+        'back_url': back_url, 'back_label': back_label, 'detail_return': request.get_full_path(),
     })

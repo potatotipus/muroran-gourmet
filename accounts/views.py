@@ -1,16 +1,18 @@
 """アカウント作成・認証とログイン後の入口。"""
 
 from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView, LogoutView
 from django.db import IntegrityError, transaction
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import reverse, reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import never_cache
 from django.views.generic import FormView, TemplateView
 
-from .forms import EmailAuthenticationForm, SignUpForm
+from .forms import EmailAuthenticationForm, ProfileForm, SignUpForm
 
 
 class AccountLoginView(LoginView):
@@ -58,3 +60,34 @@ class AccountLogoutView(LogoutView):
 @method_decorator(never_cache, name='dispatch')
 class ChooseView(LoginRequiredMixin, TemplateView):
     template_name = 'accounts/choose.html'
+
+
+@never_cache
+@login_required
+def profile(request):
+    from community.models import Favorite, Review
+    from visits.services import visit_summary
+    return render(request, 'accounts/profile.html', {
+        'summary': visit_summary(request.user),
+        'favorite_count': Favorite.objects.filter(user=request.user).count(),
+        'reviews': Review.objects.filter(user=request.user).select_related('restaurant'),
+    })
+
+
+@never_cache
+@login_required
+def profile_edit(request):
+    form = ProfileForm(request.POST if request.method == 'POST' else None, instance=request.user)
+    if request.method == 'POST' and form.is_valid():
+        try:
+            with transaction.atomic():
+                form.save()
+        except IntegrityError:
+            if form._meta.model.objects.exclude(pk=request.user.pk).filter(username=form.cleaned_data['email']).exists():
+                form.add_error('email', 'このメールアドレスはすでに登録されています。')
+            else:
+                raise
+        else:
+            messages.success(request, 'プロフィールを更新しました。')
+            return redirect('accounts:profile')
+    return render(request, 'accounts/profile_edit.html', {'form': form})

@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'visits:update' restaurant.pk %}" class="state-form">
+  {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <input type="hidden" name="action" value="{% if registered or restaurant.is_visited %}remove{% else %}add{% endif %}">
+  <button class="button button-activity" type="submit">{% if registered or restaurant.is_visited %}訪問済み登録を解除{% else %}訪問済みに登録{% endif %}</button>
+</form>

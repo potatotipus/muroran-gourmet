@@ -1,0 +1,12 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}マイページ | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page activity-page"><p class="eyebrow">15 / MY PAGE</p><h1 class="page-title">マイページ</h1>
+  <div class="profile-info"><h2>{{ user.get_short_name|default:user.username }}</h2><p>{{ user.email|default:'メールアドレス未登録' }}</p><a href="{% url 'accounts:profile_edit' %}">プロフィール編集</a></div>
+  {% include 'visits/includes/summary.html' %}
+  <div class="activity-links"><a href="{% url 'community:favorites' %}">お気に入り（{{ favorite_count }}件）</a><a href="{% url 'visits:history' %}">訪問履歴（{{ summary.visit_count }}件）</a><a href="{% url 'visits:stamps' %}">スタンプ</a><a href="{% url 'maps:personal' %}">自分のマップ</a></div>
+  <h2>投稿した口コミ</h2>
+  <ul class="history-list">{% for review in reviews %}<li><div><a href="{{ review.restaurant.get_absolute_url }}">{{ review.restaurant.name }}</a><p>{{ review.rating }} / 5 · {{ review.comment }}</p><p class="field-help">{{ review.created_at|date:'Y/m/d H:i' }}</p></div><a href="{% url 'community:review_edit' review.pk %}">編集する</a></li>{% empty %}<li>投稿した口コミはまだありません。</li>{% endfor %}</ul>
+  <form method="post" action="{% url 'accounts:logout' %}">{% csrf_token %}<button class="button button-activity" type="submit">ログアウト</button></form>
+</section>
+{% endblock %}

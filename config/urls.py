@@ -27,6 +27,7 @@ urlpatterns = [
     path('restaurants/', include('restaurants.urls')),
     path('maps/', include('maps.urls')),
     path('community/', include('community.urls')),
+    path('visits/', include('visits.urls')),
     path('admin/', admin.site.urls),
 ]
 
