@@ -1,0 +1,42 @@
+{% extends 'restaurants/base.html' %}
+
+{% block title %}店舗一覧 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'restaurants:genres' %}">← ジャンル選択へ</a>
+  <div class="page-heading">
+    <div><p class="eyebrow">06 / RESTAURANTS</p><h1 class="page-title" id="page-title">店舗一覧</h1><p class="page-intro">気になる一軒を、見つけよう。</p></div>
+    <a class="button filter-link" href="{% url 'restaurants:filters' %}{% if query_string %}?{{ query_string }}{% endif %}">条件で絞り込む <span aria-hidden="true">↗</span></a>
+  </div>
+  <form method="get" class="quick-search" action="{% url 'restaurants:list' %}">
+    <div class="search-field">{{ form.q.label_tag }}{{ form.q }}</div>
+    <div class="search-field">{{ form.genre.label_tag }}{{ form.genre }}</div>
+    {% if form.budget.value %}<input type="hidden" name="budget" value="{{ form.budget.value }}">{% endif %}
+    {% if form.area.value %}<input type="hidden" name="area" value="{{ form.area.value }}">{% endif %}
+    {% for tag in form.tags.value %}<input type="hidden" name="tags" value="{{ tag }}">{% endfor %}
+    <button class="button button-search" type="submit">検索する</button>
+  </form>
+  {% if form.errors %}<div class="form-alert" role="alert">検索条件をご確認ください。{% for field in form %}{% if field.errors %}<div>{{ field.label }}{{ field.errors }}</div>{% endif %}{% endfor %}</div>{% endif %}
+  {% if query_string %}
+  <div class="active-filters">
+    <span>検索条件：</span>
+    {% if form.is_valid %}
+      {% if form.cleaned_data.q %}<span>「{{ form.cleaned_data.q }}」</span>{% endif %}
+      {% if form.cleaned_data.genre %}<span>{{ form.cleaned_data.genre }}</span>{% endif %}
+      {% if form.cleaned_data.area %}<span>{{ form.cleaned_data.area }}</span>{% endif %}
+      {% if form.cleaned_data.budget %}<span>{{ form.cleaned_data.budget }}円以内</span>{% endif %}
+      {% for tag in form.cleaned_data.tags %}<span>{{ tag.name }}</span>{% endfor %}
+    {% endif %}
+    <a href="{% url 'restaurants:list' %}">条件をリセットする</a>
+  </div>
+  {% endif %}
+  <p class="result-count"><strong>{{ result_count }}</strong> 件のお店が見つかりました</p>
+  <div class="restaurant-grid">
+    {% for restaurant in restaurants %}
+      {% include 'restaurants/includes/card.html' %}
+    {% empty %}
+      <div class="empty-results"><h2>一致するお店が見つかりませんでした。</h2><p>キーワードや検索条件を変更して、もう一度お試しください。</p><a href="{% url 'restaurants:list' %}">すべてのお店を見る</a></div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

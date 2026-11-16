@@ -1,0 +1,14 @@
+<article class="restaurant-card">
+  <a href="{{ restaurant.get_absolute_url }}{% if query_string %}?{{ query_string }}{% endif %}" class="restaurant-card-link">
+    {% include 'restaurants/includes/image.html' %}
+    <div class="restaurant-card-body">
+      {% if restaurant.is_demo %}<span class="demo-badge">架空のデモ店舗</span>{% endif %}
+      <p class="restaurant-meta">{{ restaurant.genre|default:'ジャンル未登録' }} / {{ restaurant.area|default:'エリア未登録' }}</p>
+      <h2>{{ restaurant.name }}</h2>
+      <p class="price-label">{{ restaurant.price_label }}</p>
+      {% include 'restaurants/includes/tags.html' %}
+      <p class="restaurant-excerpt">{{ restaurant.description|default:'店舗説明はまだ登録されていません。'|truncatechars:90 }}</p>
+      <span class="detail-label">お店の詳細を見る <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+</article>

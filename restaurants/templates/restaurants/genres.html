@@ -1,0 +1,24 @@
+{% extends 'restaurants/base.html' %}
+
+{% block title %}ジャンル選択 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page genre-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'accounts:choose' %}">← 探し方の選択へ</a>
+  <p class="eyebrow">05 / FIND BY GENRE</p>
+  <h1 class="page-title" id="page-title">ジャンル選択</h1>
+  <p class="page-intro">今日は、何を食べよう。<br>ジャンルや気になる特徴から、室蘭のお店を探してみましょう。</p>
+  <h2>料理のジャンル</h2>
+  <div class="genre-grid">
+    <a class="genre-choice all-genres" href="{% url 'restaurants:list' %}"><span>すべて</span><span aria-hidden="true">→</span></a>
+    {% for genre in genres %}
+    <a class="genre-choice" href="{% url 'restaurants:list' %}?genre={{ genre.slug|urlencode }}"><span>{{ genre.name }}</span><span aria-hidden="true">→</span></a>
+    {% endfor %}
+  </div>
+  <h2 class="features-heading">気になる特徴から</h2>
+  <div class="genre-grid feature-grid">
+    <a class="genre-choice" href="{% url 'restaurants:list' %}?tags=one-coin"><span>ワンコイン</span><span aria-hidden="true">→</span></a>
+    <a class="genre-choice" href="{% url 'restaurants:list' %}?tags=cheap&amp;tags=large"><span>激安大盛り</span><span aria-hidden="true">→</span></a>
+  </div>
+  <p class="selection-note">「激安大盛り」は、激安・大盛りの両方の特徴が登録されたお店です。</p>
+</section>
+{% endblock %}
