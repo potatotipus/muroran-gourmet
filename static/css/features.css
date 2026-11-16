@@ -1,0 +1,23 @@
+.flash-messages { margin-block: 20px; padding: 14px 18px; border: 1px solid #bdd6c8; border-radius: 8px; background: #edf5ee; color: #244d39; font-size: .85rem; }
+.restaurant-page.activity-page { --accent: #b23b68; --green: var(--accent); }
+.button-activity { color: #fff; border-color: #b23b68; background: #b23b68; }
+.button-orange { color: #fff; border-color: #b96316; background: #b96316; }
+.form-field textarea, .form-field select { width: 100%; min-height: 50px; padding: 12px; border: 1px solid #b8c5d3; border-radius: 6px; color: var(--ink); background: #fff; font: inherit; font-size: 1rem; }
+.form-field textarea { resize: vertical; }
+.restaurant-grid .restaurant-card { display: flex; flex-direction: column; }
+.restaurant-grid .restaurant-card-link { height: auto; flex: 1; }
+.card-actions { padding: 0 20px 20px; }
+.card-actions .button { width: 100%; font-size: .8rem; }
+.state-form { margin: 0; }
+.restaurant-page.detail-page { --green: #b96316; }
+.store-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 24px 0; }
+.store-actions .button { font-size: .85rem; }
+.reviews-section { margin-block: 36px; }
+.review-card { padding: 24px; border: 1px solid var(--line); border-radius: 10px; background: #fff; margin-bottom: 16px; overflow-wrap: anywhere; }
+.review-card h3 { font-size: .9rem; margin-top: 0; }
+.review-stars { color: #a35412; letter-spacing: .1em; }
+.review-links { display: flex; gap: 20px; font-size: .8rem; }
+.review-links a { display: inline-block; padding-block: 12px; }
+.self-report-note { padding: 14px 18px; background: #f8edf2; border-radius: 8px; font-size: .8rem; }
+.activity-links { display: flex; flex-wrap: wrap; gap: 16px; margin-block: 24px; }
+@media (max-width: 760px) { .store-actions { flex-direction: column; }.store-actions .button { width: 100%; } }

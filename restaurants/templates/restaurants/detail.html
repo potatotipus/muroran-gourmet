@@ -34,16 +34,13 @@
       <section class="detail-panel"><h2>おすすめメニュー</h2><div>{{ restaurant.recommended_menu|default:'まだ登録されていません。'|linebreaks }}</div></section>
     </div>
   </div>
-  <section class="future-actions" aria-labelledby="actions-title">
-    <h2 id="actions-title">このお店を、もっと。</h2>
-    <p>以下の機能は準備中です。お気に入りや訪問履歴はまだ保存できません。</p>
-    <div class="future-buttons">
-      <button type="button" disabled>地図を見る <small>準備中</small></button>
-      <button type="button" disabled>バスで行く <small>準備中</small></button>
-      <button type="button" disabled>口コミを見る・書く <small>準備中</small></button>
-      <button type="button" disabled>お気に入りに追加 <small>準備中</small></button>
-      <button type="button" disabled>訪問済みに登録 <small>準備中</small></button>
-    </div>
+  <section class="store-actions" aria-label="このお店でできること">
+    <a class="button button-orange" href="{% url 'maps:store' restaurant.pk %}">地図を見る</a>
+    <a class="button button-orange" href="{% url 'maps:directions' restaurant.pk %}">バスで行く</a>
+    <a class="button button-orange" href="{% url 'community:review_create' restaurant.pk %}">口コミを投稿する</a>
+    {% include 'community/includes/favorite_form.html' %}
   </section>
+  {% include 'community/includes/reviews.html' %}
+  <p><a href="{% url 'community:report_store' restaurant.pk %}">店舗情報の通報・修正提案</a></p>
 </article>
 {% endblock %}

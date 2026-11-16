@@ -1,0 +1,8 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}情報の通報・修正提案 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="account-page"><a class="back-link" href="{{ restaurant.get_absolute_url }}">← 店舗詳細へ</a><h1 class="page-title">情報の通報・修正提案</h1><p>{{ restaurant.name }}{% if review %}の口コミ{% endif %}</p>
+  <p class="field-help">管理者が内容を確認します。送信した内容が店舗情報に自動で反映されることはありません。</p>
+  <form method="post" class="account-form">{% csrf_token %}{% include 'accounts/includes/form_fields.html' %}<button class="button button-orange" type="submit">管理者へ送信する</button></form>
+</section>
+{% endblock %}

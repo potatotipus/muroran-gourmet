@@ -6,7 +6,7 @@ from django.views.decorators.cache import never_cache
 
 from restaurants.forms import RestaurantSearchForm
 from restaurants.models import Restaurant
-from restaurants.views import filter_restaurants
+from restaurants.query import filter_restaurants, restaurant_queryset
 
 from .services import google_maps_urls, map_data
 
@@ -15,7 +15,7 @@ from .services import google_maps_urls, map_data
 @login_required
 def search(request):
     form = RestaurantSearchForm(request.GET)
-    restaurants = filter_restaurants(form)
+    restaurants = filter_restaurants(form, request.user)
     data = map_data(restaurants, form.query_string)
     return render(request, 'maps/search.html', {
         'form': form, 'query_string': form.query_string, 'map_data': data,
@@ -26,7 +26,7 @@ def search(request):
 @never_cache
 @login_required
 def store(request, pk):
-    restaurant = get_object_or_404(Restaurant, pk=pk)
+    restaurant = get_object_or_404(restaurant_queryset(request.user), pk=pk)
     return render(request, 'maps/store.html', {
         'restaurant': restaurant, 'map_data': map_data([restaurant]),
         'google_urls': google_maps_urls(restaurant),
@@ -36,7 +36,7 @@ def store(request, pk):
 @never_cache
 @login_required
 def directions(request, pk):
-    restaurant = get_object_or_404(Restaurant, pk=pk)
+    restaurant = get_object_or_404(restaurant_queryset(request.user), pk=pk)
     return render(request, 'maps/directions.html', {
         'restaurant': restaurant, 'google_urls': google_maps_urls(restaurant),
     })

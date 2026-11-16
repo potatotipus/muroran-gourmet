@@ -206,10 +206,13 @@ class RestaurantSearchTests(TestCase):
     def test_missing_store_returns_404(self):
         self.assertEqual(self.client.get(reverse('restaurants:detail', args=[999999])).status_code, 404)
 
-    def test_future_buttons_are_disabled_and_do_not_imply_saved_state(self):
+    def test_store_actions_connect_to_maps_reviews_and_favorites(self):
         response = self.client.get(self.a.get_absolute_url())
-        self.assertContains(response, 'type="button" disabled', count=5)
-        self.assertContains(response, 'お気に入りや訪問履歴はまだ保存できません。')
+        self.assertContains(response, reverse('maps:store', args=[self.a.pk]))
+        self.assertContains(response, reverse('maps:directions', args=[self.a.pk]))
+        self.assertContains(response, reverse('community:review_create', args=[self.a.pk]))
+        self.assertContains(response, reverse('community:favorite_update', args=[self.a.pk]))
+        self.assertNotContains(response, 'type="button" disabled')
 
     def test_store_content_and_search_queries_are_escaped(self):
         self.a.name = '<script>alert(1)</script>'

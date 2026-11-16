@@ -203,7 +203,7 @@ class AccountFlowTests(TestCase):
                 self.assertTemplateUsed(response, 'includes/bottom_nav.html')
                 self.assertContains(response, '室蘭メンバー さん')
                 self.assertContains(response, f'action="{reverse("accounts:logout")}"')
-                self.assertContains(response, 'aria-disabled="true"', count=3)
+                self.assertContains(response, 'aria-disabled="true"', count=2)
                 self.assertContains(response, 'aria-current="page"', count=1)
                 for title in ['ホーム', '地図', 'スタンプ', 'お気に入り', 'マイページ']:
                     self.assertContains(response, title)
