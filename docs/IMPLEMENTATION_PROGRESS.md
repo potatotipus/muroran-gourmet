@@ -13,10 +13,12 @@
 
 1. 既存調査: 完了。認証・共通UI・店舗検索を再利用。
 2. 店舗検索: 完了済み機能を確認。`python manage.py test restaurants` の35件成功。
-3. 地図・経路: 08・10・11と共通描画を実装。Leaflet 1.9.4はnpm配布物のSHA-512を照合して同梱。16は次のフェーズで接続する。
+3. 地図・経路: 08・10・11と共通描画を実装。Leaflet 1.9.4はnpm配布物のSHA-512を照合して同梱。16への共通描画の接続も完了。
 4. 口コミ・お気に入り: Review / Favorite / Report、本人の編集・削除、管理者削除、平均評価、詳細・カード・14への接続を実装。
 5. 訪問・スタンプ・マイページ: 実装済み。Visit、13・15・16、プロフィール編集、履歴、全ナビゲーションを接続。
-6. 結合・README・PR: 実ブラウザ・PowerShell手順・全テスト・README更新を実施済み。最終のWindows/Ubuntu CIとPR確認が残る。
+6. 結合・README・PR: 完了。実ブラウザ・PowerShell手順・全テスト・README更新、Windows/Ubuntu CI成功。PR #4を作成済み。
+
+PR: https://github.com/potatotipus/muroran-gourmet/pull/4
 
 ## フェーズ3の検証
 
@@ -37,7 +39,7 @@
 重複・解除・利用者分離・自己申告表示・プロフィール権限・メール変更時の再認証・全16画面の表示とナビを検証。
 個人マップは本人の記録だけを表示し、お気に入り＋訪問済みの赤優先と両状態の表示データを確認。
 
-## フェーズ6の途中結果
+## フェーズ6の最終結果
 
 - 全Djangoテスト124件成功。表示名未設定時に公開口コミへメールアドレスを出さないこと、他人の口コミ削除にはスタッフ状態と削除権限の両方が必要なことも回帰テストに追加。
 - `python3 scripts/browser_smoke.py --artifacts /tmp/muroran-complete-browser` が成功。
@@ -47,7 +49,7 @@
 - 最初の背景実取得は失敗（`real_osm_loaded: false`）。以後の固定画像によるUI確認・通信失敗の模擬と区別して記録。
 - `scripts/smoke_server.py` は一時DBだけを使い、既存の認証・店舗・座標の移行保持も成功。
 - 読みやすいポイント表記、地図の44pxタップ領域、戻り先維持を調整。調整後の最終ブラウザ再確認も成功（`/tmp/muroran-complete-browser-final/report.json`）。
-- READMEをPowerShell向けに更新。Windows用tzdataを取得確認済み。CIにUbuntu/Windows行列を追加したが、まだその結果は未確認。
+- READMEをPowerShell向けに更新。Windows用tzdataを取得確認済み。CIのUbuntu/Windows行列はいずれも124件成功。
 
 ### Windows CIの診断
 
@@ -56,23 +58,26 @@
 `PYTHONIOENCODING=ascii` で同テストを実行して再現した。
 子プロセスの出力と読み取りをUTF-8に固定し、CIのテスト出力も統一した。
 失敗時にChecksの注釈へ詳細を残すラッパーを追加した（終了コードはそのまま返す）。
-修正後のWindows CI確認が必要。
+修正後はUbuntu・Windowsとも成功（run `43808321748`、コードのコミット `869141b`）。
+https://github.com/potatotipus/muroran-gourmet/actions/runs/43808321748
 
 ## 主な設計
 
 - Restaurant / Genre / Tag と既存の検索条件は再利用し、他アプリに店舗情報をコピーしない。
 - Favorite / Visit はユーザー・店舗の組をDBでも一意にする。POSTの追加／解除は再送しても増減が重複しない。
 - 訪問登録は自己申告。異なる1店舗につき1スタンプ・10ポイント。解除すると減る。残高を別途保存しない。
-- 口コミは1〜5、200文字以内。本人だけ編集でき、本人と削除権限のある管理者が削除できる。
+- 口コミは1〜5、200文字以内。本人だけ編集でき、本人とスタッフかつ削除権限のある管理者が削除できる。
 - 位置未登録・通信失敗でも案内と店舗リンクを残す。地図表示の店舗文字列はDOMの textContent で挿入する。
 - 地図はOpenStreetMapに帰属表示。Googleへのリンクで徒歩・公共交通の実際の経路を確認し、時刻を推測しない。
 
-## 次の作業
+## 残る外部設定と、必要な場合の再開
 
-1. フェーズ6のチェックポイントをpushし、Ubuntu/WindowsのCIを確認・必要なら修正する。
-2. 記録を最終結果で更新し、`feat/complete-prototype` からmainへの日本語PRを作成する。
-OpenStreetMapの `tile.openstreetmap.org` は現環境で403。許可ドメイン追加を下書きに保存済み、設定の反映待ち。
-Leafletは同梱済みで、背景の取得失敗時もピン・店舗リンクを表示する設計。実ブラウザ確認は結合フェーズで実施する。
+今回の範囲のコード実装は完了。現在発生中のアプリ／Djangoテストのエラーはない。
+OpenStreetMapの `tile.openstreetmap.org` は現クラウド環境で403。許可ドメイン追加を下書きに保存済み、設定の反映待ち。
+背景の実取得には成功していないため、固定画像を使うUI検証を実地理情報の確認とは扱わない。
+設定反映後に `scripts/browser_smoke.py --require-osm` を実行し、`report.json` の `real_osm_loaded: true` を確認する。
+ブラウザテストの依存は `requirements-dev.txt`、詳しいコマンドはREADMEに記載。
+QR/GPS認証・ポイント交換・予約・メール到達確認／パスワード再設定・公開デプロイは今回の対象外。
 
 ## 最終確認用コマンド
 
