@@ -22,9 +22,13 @@ class RestaurantSearchForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         areas = list(Restaurant.objects.exclude(area='').order_by('area').values_list('area', flat=True).distinct())
-        self.fields['area'].choices = [('', '指定なし')] + [
+        self.fields['area'].choices = [('', '指定なし'), ('__other__', 'その他（高砂・中島・本町以外）')] + [
             (name, name) for name in dict.fromkeys(['高砂', '中島', '本町', *areas])
         ]
+
+    @property
+    def area_label(self):
+        return dict(self.fields['area'].choices).get(self.cleaned_data.get('area'), '')
 
     @property
     def query_string(self):

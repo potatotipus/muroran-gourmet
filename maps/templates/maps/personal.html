@@ -1,0 +1,13 @@
+{% extends 'maps/base.html' %}
+{% block title %}自分のマップ | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page activity-page"><a class="back-link" href="{% url 'accounts:profile' %}">← マイページへ</a><p class="eyebrow">16 / MY MAP</p><h1 class="page-title">自分だけの、室蘭マップ。</h1>
+  <p class="self-report-note">お気に入りと、自分で訪問済みに登録した店舗を表示します。来店が認証された記録ではありません。</p>
+  <form method="get" class="quick-search"><div class="search-field">{{ form.mode.label_tag }}{{ form.mode }}</div><button class="button button-activity" type="submit">表示を切り替える</button></form>
+  {% if form.errors %}<p class="form-alert" role="alert">表示する記録を選び直してください。</p>{% endif %}
+  <p>{{ record_count }}件の登録 / 位置情報あり {{ map_data.stores|length }}件</p>
+  {% if not record_count %}<p>まだ表示する記録がありません。<a href="{% url 'restaurants:genres' %}">お店を探す</a></p>{% endif %}
+  {% include 'maps/includes/map.html' %}
+  <div class="activity-links"><a href="{% url 'community:favorites' %}">お気に入り</a><a href="{% url 'visits:history' %}">訪問履歴</a></div>
+</section>
+{% endblock %}

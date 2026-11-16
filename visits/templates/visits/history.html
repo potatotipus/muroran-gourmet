@@ -1,0 +1,8 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}訪問履歴 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page activity-page"><a class="back-link" href="{% url 'accounts:profile' %}">← マイページへ</a><h1 class="page-title">訪問履歴</h1>
+  {% include 'visits/includes/summary.html' %}
+  <ul class="history-list">{% for visit in visits %}<li><div><a href="{{ visit.restaurant.get_absolute_url }}">{{ visit.restaurant.name }}</a><p class="field-help">訪問登録日時：{{ visit.visited_at|date:'Y/m/d H:i' }}（自己申告）</p></div>{% include 'visits/includes/visit_form.html' with restaurant=visit.restaurant registered=True %}</li>{% empty %}<li>訪問履歴はまだありません。<a href="{% url 'restaurants:genres' %}">お店を探す</a></li>{% endfor %}</ul>
+</section>
+{% endblock %}

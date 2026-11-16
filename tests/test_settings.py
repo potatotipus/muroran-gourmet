@@ -14,6 +14,8 @@ class SettingsTests(SimpleTestCase):
         for name in ['DJANGO_DEBUG', 'DJANGO_SECRET_KEY', 'DJANGO_ALLOWED_HOSTS']:
             environment.pop(name, None)
         environment.update(overrides)
+        # Windows の既定の出力コードページにも依存せず、日本語エラーを検証する。
+        environment['PYTHONIOENCODING'] = 'utf-8'
         return subprocess.run(
             [sys.executable, '-c', (
                 'from config import settings; '
@@ -23,6 +25,7 @@ class SettingsTests(SimpleTestCase):
             env=environment,
             capture_output=True,
             text=True,
+            encoding='utf-8',
             check=False,
         )
 

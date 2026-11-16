@@ -1,0 +1,11 @@
+{% extends 'restaurants/base.html' %}
+{% load static %}
+{% block extra_head %}
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'maps/vendor/leaflet/leaflet.css' %}">
+<link rel="stylesheet" href="{% static 'maps/maps.css' %}">
+{% endblock %}
+{% block extra_scripts %}
+<script src="{% static 'maps/vendor/leaflet/leaflet.js' %}" defer></script>
+<script src="{% static 'maps/map.js' %}" defer></script>
+{% endblock %}

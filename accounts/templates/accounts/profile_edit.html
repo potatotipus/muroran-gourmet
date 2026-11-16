@@ -1,0 +1,7 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}プロフィール編集 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="account-page activity-page"><a class="back-link" href="{% url 'accounts:profile' %}">← マイページへ</a><h1 class="page-title">プロフィール編集</h1>
+  <form method="post" class="account-form">{% csrf_token %}{% include 'accounts/includes/form_fields.html' %}<button class="button button-activity" type="submit">変更を保存する</button></form>
+</section>
+{% endblock %}

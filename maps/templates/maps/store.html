@@ -1,0 +1,12 @@
+{% extends 'maps/base.html' %}
+{% block title %}{{ restaurant.name }}の地図 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page map-page" aria-labelledby="page-title">
+  <a class="back-link" href="{{ detail_url }}">← 店舗詳細へ</a>
+  <p class="eyebrow">10 / STORE MAP</p><h1 id="page-title" class="page-title">{{ restaurant.name }}の地図</h1>
+  <p>{{ restaurant.address|default:'住所未登録' }}</p>
+  {% if restaurant.is_demo %}<p class="demo-notice">架空のデモ店舗・位置情報です。</p>{% endif %}
+  {% if map_data.stores %}{% include 'maps/includes/map.html' %}{% else %}<p class="empty-results">このお店の緯度・経度はまだ登録されていません。</p>{% endif %}
+  {% if google_urls.place %}<a class="button route-button" href="{{ google_urls.place }}" target="_blank" rel="noopener noreferrer">Googleマップで開く（外部サイト）</a>{% endif %}
+</section>
+{% endblock %}

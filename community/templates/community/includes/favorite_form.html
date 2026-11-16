@@ -1,0 +1,5 @@
+<form method="post" action="{% url 'community:favorite_update' restaurant.pk %}" class="state-form">
+  {% csrf_token %}<input type="hidden" name="next" value="{{ request.get_full_path }}">
+  <input type="hidden" name="action" value="{% if restaurant.is_favorite %}remove{% else %}add{% endif %}">
+  <button type="submit" class="button button-activity">{% if restaurant.is_favorite %}お気に入りを解除{% else %}お気に入りに追加{% endif %}</button>
+</form>

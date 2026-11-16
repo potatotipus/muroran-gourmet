@@ -188,7 +188,7 @@ class AccountFlowTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, title)
                 if name == 'maps:search':
-                    self.assertContains(response, '現在準備中です。')
+                    self.assertContains(response, '地図から、お店を探す。')
                 else:
                     self.assertContains(response, '料理のジャンル')
                 self.assertContains(response, f'href="{reverse("accounts:choose")}"')
@@ -203,7 +203,7 @@ class AccountFlowTests(TestCase):
                 self.assertTemplateUsed(response, 'includes/bottom_nav.html')
                 self.assertContains(response, '室蘭メンバー さん')
                 self.assertContains(response, f'action="{reverse("accounts:logout")}"')
-                self.assertContains(response, 'aria-disabled="true"', count=3)
+                self.assertNotContains(response, 'aria-disabled="true"')
                 self.assertContains(response, 'aria-current="page"', count=1)
                 for title in ['ホーム', '地図', 'スタンプ', 'お気に入り', 'マイページ']:
                     self.assertContains(response, title)

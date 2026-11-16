@@ -1,0 +1,17 @@
+{% extends 'maps/base.html' %}
+{% block title %}{{ restaurant.name }}への経路 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page map-page route-page" aria-labelledby="page-title">
+  <a class="back-link" href="{{ detail_url }}">← 店舗詳細へ</a>
+  <p class="eyebrow">11 / DIRECTIONS</p><h1 id="page-title" class="page-title">バス・徒歩で行く</h1>
+  <div class="detail-panel"><h2>{{ restaurant.name }}</h2><p>{{ restaurant.address|default:'住所未登録' }}</p><p>出発地はGoogleマップで指定できます。</p></div>
+  {% if restaurant.is_demo %}<p class="demo-notice">目的地は架空のデモ位置・住所です。実店舗への案内ではありません。</p>{% endif %}
+  {% if google_urls.transit %}
+  <div class="route-links">
+    <a class="button route-button" href="{{ google_urls.transit }}" target="_blank" rel="noopener noreferrer">公共交通機関の経路を確認（Googleマップ）</a>
+    <a class="button route-button" href="{{ google_urls.walking }}" target="_blank" rel="noopener noreferrer">徒歩の経路を確認（Googleマップ）</a>
+  </div>
+  <p class="field-help">外部サイトに移動します。運行状況・時刻・所要時間・利用可能な経路はGoogleマップでご確認ください。</p>
+  {% else %}<p class="empty-results">位置情報・住所が未登録のため、経路リンクを表示できません。</p>{% endif %}
+</section>
+{% endblock %}

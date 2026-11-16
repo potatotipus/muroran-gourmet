@@ -1,0 +1,13 @@
+{% if map_data.stores %}
+<div class="map-legend" aria-label="ピンの凡例"><span class="legend-blue">青：未訪問</span><span class="legend-green">緑：訪問済み（自己申告）</span><span class="legend-red">赤：お気に入り</span></div>
+{% endif %}
+<p id="map-status" role="status" class="map-status">地図を読み込んでいます。</p>
+<div id="restaurant-map" class="map-canvas" aria-label="店舗の地図"></div>
+{{ map_data|json_script:'map-data' }}
+<noscript><p>地図の表示にはJavaScriptが必要です。下の店舗リンクから詳細をご覧いただけます。</p></noscript>
+<p class="field-help">地図：© OpenStreetMap contributors。デモ店舗の位置は架空です。お気に入りと訪問済みの両方の場合は赤ピンで表示します。</p>
+<ul class="map-store-links" aria-label="地図に表示した店舗">
+  {% for store in map_data.stores %}
+  <li><a href="{{ store.detail_url }}">{{ store.name }}</a>{% if store.is_demo %} <small>デモ</small>{% endif %}{% if store.is_favorite %} <small>お気に入り</small>{% endif %}{% if store.is_visited %} <small>訪問済み（自己申告）</small>{% endif %}</li>
+  {% empty %}<li>表示できる位置情報がありません。店舗一覧からもお店をご確認いただけます。</li>{% endfor %}
+</ul>

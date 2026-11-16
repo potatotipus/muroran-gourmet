@@ -1,0 +1,10 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}スタンプ | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page activity-page"><p class="eyebrow">13 / STAMPS</p><h1 class="page-title">室蘭の、おいしい足あと。</h1>
+  {% include 'visits/includes/summary.html' %}
+  <h2>{{ summary.goal }}店舗をめぐろう</h2><progress class="stamp-progress" max="{{ summary.goal }}" value="{{ summary.goal_count }}">{{ summary.progress_percent }}%</progress><p>{{ summary.progress_percent }}% 達成{% if summary.progress_percent == 100 %} / 目標達成です！{% endif %}</p>
+  <div class="activity-links"><a href="{% url 'visits:history' %}">訪問履歴を見る</a><a href="{% url 'maps:personal' %}">自分のマップ</a><a href="{% url 'restaurants:genres' %}">次のお店を探す</a></div>
+  <ol class="stamp-grid">{% for visit in visits %}<li><span class="stamp-mark" aria-hidden="true">{{ forloop.counter }}</span><a href="{{ visit.restaurant.get_absolute_url }}">{{ visit.restaurant.name }}</a><p>{{ visit.visited_at|date:'Y/m/d' }} 登録</p></li>{% empty %}<li>まだスタンプはありません。訪問したお店の詳細から登録できます。</li>{% endfor %}</ol>
+</section>
+{% endblock %}

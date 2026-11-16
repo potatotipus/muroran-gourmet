@@ -1,0 +1,7 @@
+{% extends 'restaurants/base.html' %}
+{% block title %}口コミの削除 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="account-page review-page"><a class="back-link" href="{{ return_url }}">← 戻る</a><h1 class="page-title">口コミを削除しますか？</h1><p>{{ review.comment }}</p>
+  <form method="post">{% csrf_token %}<input type="hidden" name="next" value="{{ return_url }}"><button class="button button-orange" type="submit">削除する</button></form>
+</section>
+{% endblock %}

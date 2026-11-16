@@ -6,9 +6,12 @@
       <p class="restaurant-meta">{{ restaurant.genre|default:'ジャンル未登録' }} / {{ restaurant.area|default:'エリア未登録' }}</p>
       <h2>{{ restaurant.name }}</h2>
       <p class="price-label">{{ restaurant.price_label }}</p>
+      {% if restaurant.avg_rating %}<p class="field-help">評価 {{ restaurant.avg_rating|floatformat:1 }} / 5（{{ restaurant.review_count }}件）</p>{% else %}<p class="field-help">未評価</p>{% endif %}
+      {% if restaurant.is_visited %}<p class="field-help">訪問済み（自己申告）</p>{% endif %}
       {% include 'restaurants/includes/tags.html' %}
       <p class="restaurant-excerpt">{{ restaurant.description|default:'店舗説明はまだ登録されていません。'|truncatechars:90 }}</p>
       <span class="detail-label">お店の詳細を見る <span aria-hidden="true">→</span></span>
     </div>
   </a>
+  <div class="card-actions">{% include 'community/includes/favorite_form.html' %}</div>
 </article>

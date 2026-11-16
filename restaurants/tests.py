@@ -139,6 +139,11 @@ class RestaurantSearchTests(TestCase):
         _, stores = self.results(area='輪西')
         self.assertEqual(stores, [self.d])
 
+    def test_other_area_group_selects_only_other_registered_areas(self):
+        response, stores = self.results(area='__other__')
+        self.assertEqual(stores, [self.d])
+        self.assertContains(response, 'その他（高砂・中島・本町以外）')
+
     def test_late_night_requires_recorded_hours_and_does_not_claim_open_now(self):
         response, stores = self.results(tags=['late-night'])
         self.assertEqual(stores, [self.b])
@@ -206,10 +211,13 @@ class RestaurantSearchTests(TestCase):
     def test_missing_store_returns_404(self):
         self.assertEqual(self.client.get(reverse('restaurants:detail', args=[999999])).status_code, 404)
 
-    def test_future_buttons_are_disabled_and_do_not_imply_saved_state(self):
+    def test_store_actions_connect_to_maps_reviews_and_favorites(self):
         response = self.client.get(self.a.get_absolute_url())
-        self.assertContains(response, 'type="button" disabled', count=5)
-        self.assertContains(response, 'お気に入りや訪問履歴はまだ保存できません。')
+        self.assertContains(response, reverse('maps:store', args=[self.a.pk]))
+        self.assertContains(response, reverse('maps:directions', args=[self.a.pk]))
+        self.assertContains(response, reverse('community:review_create', args=[self.a.pk]))
+        self.assertContains(response, reverse('community:favorite_update', args=[self.a.pk]))
+        self.assertNotContains(response, 'type="button" disabled')
 
     def test_store_content_and_search_queries_are_escaped(self):
         self.a.name = '<script>alert(1)</script>'
