@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block title %}ログイン | むろらんグルメマップ{% endblock %}
+
+{% block content %}
+<section class="account-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'home' %}">← トップへ</a>
+  <p class="eyebrow">02 / LOGIN</p>
+  <h1 id="page-title" class="page-title">ログイン</h1>
+  <p class="page-intro">室蘭のおいしい発見を、ここから。</p>
+  <form method="post" class="account-form" novalidate>
+    {% csrf_token %}
+    {% include 'accounts/includes/form_fields.html' %}
+    <button class="button button-primary" type="submit">ログイン<span aria-hidden="true">→</span></button>
+  </form>
+  <p class="account-link">はじめてご利用の方は <a href="{% url 'accounts:signup' %}">新規登録</a></p>
+</section>
+{% endblock %}

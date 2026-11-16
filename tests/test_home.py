@@ -1,20 +1,8 @@
 """共通画面と、初期段階で公開する URL の基本テスト。"""
 
-from html.parser import HTMLParser
-
 from django.contrib.staticfiles import finders
 from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
-
-
-class ButtonParser(HTMLParser):
-    def __init__(self):
-        super().__init__()
-        self.buttons = []
-
-    def handle_starttag(self, tag, attrs):
-        if tag == 'button':
-            self.buttons.append(dict(attrs))
 
 
 class HomeTests(SimpleTestCase):
@@ -36,20 +24,18 @@ class HomeTests(SimpleTestCase):
         self.assertContains(response, 'href="/static/css/site.css"')
         self.assertIsNotNone(finders.find('css/site.css'))
 
-    def test_account_actions_are_disabled_and_explained(self):
+    def test_account_actions_link_to_login_and_signup(self):
         response = self.client.get(reverse('home'))
-        parser = ButtonParser()
-        parser.feed(response.content.decode())
 
-        self.assertEqual(len(parser.buttons), 2)
-        for button in parser.buttons:
-            self.assertIn('disabled', button)
-            self.assertEqual(button['type'], 'button')
-        self.assertContains(response, 'ログイン・新規登録はまだご利用いただけません。')
+        self.assertContains(response, f'href="{reverse("accounts:login")}"')
+        self.assertContains(response, f'href="{reverse("accounts:signup")}"')
+        self.assertNotContains(response, 'disabled')
+        self.assertNotContains(response, 'メインナビゲーション')
+        self.assertNotContains(response, 'ゲスト')
         self.assertNotContains(response, '<form')
 
     def test_future_features_are_not_exposed(self):
-        for url in ['/accounts/login/', '/accounts/signup/', '/restaurants/', '/maps/', '/community/', '/visits/']:
+        for url in ['/restaurants/', '/maps/', '/community/', '/visits/']:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 404)
 

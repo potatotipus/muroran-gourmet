@@ -9,11 +9,14 @@
     <h1 id="welcome-title">むろらん<br>グルメマップ<span class="title-dot">。</span></h1>
     <p class="catchphrase">食べて、歩いて、<br>もっと室蘭が好きになる。</p>
     <p class="introduction">いつもの街にも、まだ知らないおいしさがある。<br class="desktop-break">次に行きたいお店を見つける、小さなきっかけに。</p>
-    <div class="welcome-actions" aria-describedby="account-notice">
-      <button class="button button-primary" type="button" disabled>ログイン<span>準備中</span></button>
-      <button class="button button-secondary" type="button" disabled>新規登録<span>準備中</span></button>
+    <div class="welcome-actions">
+      {% if user.is_authenticated %}
+      <a class="button button-primary" href="{% url 'accounts:choose' %}">お店を探す<span aria-hidden="true">→</span></a>
+      {% else %}
+      <a class="button button-primary" href="{% url 'accounts:login' %}">ログイン<span aria-hidden="true">→</span></a>
+      <a class="button button-secondary" href="{% url 'accounts:signup' %}">新規登録<span aria-hidden="true">→</span></a>
+      {% endif %}
     </div>
-    <p id="account-notice" class="notice">ただいま準備中です。ログイン・新規登録はまだご利用いただけません。</p>
   </div>
   <div class="welcome-art" aria-hidden="true">
     <div class="art-grid"></div>

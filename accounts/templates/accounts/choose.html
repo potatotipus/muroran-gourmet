@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}探し方の選択 | むろらんグルメマップ{% endblock %}
+
+{% block content %}
+<section class="selection-page" aria-labelledby="page-title">
+  <p class="eyebrow">04 / FIND YOUR NEXT FAVORITE</p>
+  <h1 id="page-title" class="page-title">お店の探し方を選ぶ</h1>
+  <p class="page-intro">今日は、どんな出会いにしよう。<br>気になる探し方から、室蘭のお店へ。</p>
+  <div class="selection-cards">
+    <a class="selection-card" href="{% url 'restaurants:genres' %}">
+      <span class="card-icon" aria-hidden="true">♧</span>
+      <span class="card-eyebrow">BY GENRE</span>
+      <h2>ジャンルから探す</h2>
+      <p>食べたいものから、一軒を見つける。</p>
+      <span class="card-arrow" aria-hidden="true">→</span>
+    </a>
+    <a class="selection-card" href="{% url 'maps:search' %}">
+      <span class="card-icon" aria-hidden="true">⌖</span>
+      <span class="card-eyebrow">BY MAP</span>
+      <h2>地図から探す</h2>
+      <p>街を眺めて、気になる場所へ。</p>
+      <span class="card-arrow" aria-hidden="true">→</span>
+    </a>
+  </div>
+  <p class="selection-note">それぞれの検索機能は準備中です。次の画面でご案内します。</p>
+</section>
+{% endblock %}

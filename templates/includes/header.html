@@ -1,7 +1,17 @@
 <header class="site-header">
-  <a class="brand" href="{% url 'home' %}" aria-label="むろらんグルメマップ トップへ">
+  <a class="brand" href="{% if user.is_authenticated %}{% url 'accounts:choose' %}{% else %}{% url 'home' %}{% endif %}" aria-label="むろらんグルメマップ ホームへ">
     <span class="brand-mark" aria-hidden="true">m<span>.</span></span>
     <span>むろらんグルメマップ</span>
   </a>
+  {% if user.is_authenticated %}
+  <div class="account-menu">
+    <span class="user-name">{{ user.get_short_name|default:user.username }} さん</span>
+    <form method="post" action="{% url 'accounts:logout' %}">
+      {% csrf_token %}
+      <button type="submit" class="logout-button">ログアウト</button>
+    </form>
+  </div>
+  {% else %}
   <span class="header-label">MURORAN, HOKKAIDO</span>
+  {% endif %}
 </header>
