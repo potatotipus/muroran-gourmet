@@ -65,6 +65,7 @@ db.sqlite3-wal
 db.sqlite3-shm
 staticfiles/
 media/
+browser-artifacts/
 
 # Flask stuff:
 instance/

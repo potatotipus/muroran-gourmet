@@ -35,7 +35,9 @@ def filter_restaurants(form, user=None):
         )
     if data['genre']:
         queryset = queryset.filter(genre=data['genre'])
-    if data['area']:
+    if data['area'] == '__other__':
+        queryset = queryset.exclude(area__in=['', '高砂', '中島', '本町'])
+    elif data['area']:
         queryset = queryset.filter(area=data['area'])
     if data['budget']:
         queryset = queryset.filter(price_max__lte=int(data['budget']))

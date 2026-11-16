@@ -54,7 +54,7 @@ def review_edit(request, pk):
 @login_required
 def review_delete(request, pk):
     reviews = Review.objects.select_related('restaurant')
-    if not request.user.has_perm('community.delete_review'):
+    if not (request.user.is_staff and request.user.has_perm('community.delete_review')):
         reviews = reviews.filter(user=request.user)
     review = get_object_or_404(reviews, pk=pk)
     if request.method == 'POST':
@@ -62,7 +62,10 @@ def review_delete(request, pk):
         review.delete()
         messages.success(request, '口コミを削除しました。')
         return redirect_back(request, destination)
-    return render(request, 'community/review_delete.html', {'review': review})
+    return render(request, 'community/review_delete.html', {
+        'review': review,
+        'return_url': local_destination(request, request.POST.get('next') or request.GET.get('next'), review.restaurant.get_absolute_url()),
+    })
 
 
 @never_cache

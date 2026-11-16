@@ -2,7 +2,7 @@
 {% block title %}{{ restaurant.name }}の地図 | むろらんグルメマップ{% endblock %}
 {% block content %}
 <section class="restaurant-page map-page" aria-labelledby="page-title">
-  <a class="back-link" href="{{ restaurant.get_absolute_url }}">← 店舗詳細へ</a>
+  <a class="back-link" href="{{ detail_url }}">← 店舗詳細へ</a>
   <p class="eyebrow">10 / STORE MAP</p><h1 id="page-title" class="page-title">{{ restaurant.name }}の地図</h1>
   <p>{{ restaurant.address|default:'住所未登録' }}</p>
   {% if restaurant.is_demo %}<p class="demo-notice">架空のデモ店舗・位置情報です。</p>{% endif %}

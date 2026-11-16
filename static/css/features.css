@@ -32,5 +32,5 @@
 .history-list { padding: 0; list-style: none; }
 .history-list li { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px; margin-block: 16px; border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow-wrap: anywhere; }
 .profile-info { padding: 24px; border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow-wrap: anywhere; }
-@media (max-width: 760px) { .summary-grid { gap: 8px; }.summary-grid strong { font-size: 1.5rem; }.stamp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.history-list li { align-items: stretch; flex-direction: column; } }
+@media (max-width: 760px) { .summary-grid { gap: 8px; }.summary-grid > div { padding: 16px 8px; }.summary-grid strong { font-size: 1.5rem; }.stamp-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }.history-list li { align-items: stretch; flex-direction: column; } }
 @media (max-width: 760px) { .store-actions { flex-direction: column; }.store-actions .button { width: 100%; } }

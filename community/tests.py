@@ -83,6 +83,16 @@ class CommunityTests(TestCase):
         self.assertEqual(self.client.post(reverse('community:review_delete', args=[review.pk])).status_code, 302)
         self.assertFalse(Review.objects.exists())
 
+    def test_staff_status_and_delete_permission_are_both_required_to_moderate(self):
+        review = self.create_review(self.other)
+        for is_staff, grant_permission in [(False, True), (True, False)]:
+            actor = get_user_model().objects.create_user(username=f'role-{is_staff}', is_staff=is_staff)
+            if grant_permission:
+                actor.user_permissions.add(Permission.objects.get(codename='delete_review'))
+            self.client.force_login(actor)
+            self.assertEqual(self.client.post(reverse('community:review_delete', args=[review.pk])).status_code, 404)
+            self.assertTrue(Review.objects.filter(pk=review.pk).exists())
+
     def test_average_reflects_edits_and_deletes_without_fake_default(self):
         first = self.create_review(rating=5)
         second = self.create_review(self.other, rating=3)
@@ -101,6 +111,15 @@ class CommunityTests(TestCase):
         response = self.client.get(self.store.get_absolute_url())
         self.assertNotContains(response, '<script>alert(1)</script>')
         self.assertContains(response, '&lt;script&gt;alert(1)&lt;/script&gt;')
+
+    def test_public_author_name_does_not_expose_email_when_display_name_is_empty(self):
+        self.other.username = self.other.email = 'private-author@example.test'
+        self.other.first_name = ''
+        self.other.save()
+        self.create_review(self.other)
+        response = self.client.get(self.store.get_absolute_url())
+        self.assertNotContains(response, self.other.email)
+        self.assertContains(response, '名前未設定のユーザー')
 
     def test_review_database_constraints_reject_direct_invalid_writes(self):
         for rating, comment in [(9, 'テスト'), (2, '長' * 201), (3, ' ' * 5)]:
@@ -190,3 +209,39 @@ class CommunityTests(TestCase):
     def test_missing_targets_return_404(self):
         self.assertEqual(self.client.get(reverse('community:review_create', args=[99999])).status_code, 404)
         self.assertEqual(self.client.get(reverse('community:review_edit', args=[99999])).status_code, 404)
+
+    def test_admin_can_manage_review_and_pending_report(self):
+        admin = get_user_model().objects.create_superuser(username='site-admin', email='admin@example.test', password='Admin-Only!426')
+        review = self.create_review(self.other)
+        report = Report.objects.create(user=self.user, restaurant=self.store, review=review, kind='review', reason='確認依頼')
+        self.client.force_login(admin)
+        self.assertEqual(self.client.get(reverse('admin:community_review_changelist')).status_code, 200)
+        self.assertEqual(self.client.get(reverse('admin:community_report_change', args=[report.pk])).status_code, 200)
+        response = self.client.post(reverse('admin:community_review_delete', args=[review.pk]), {'post': 'yes'})
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(Review.objects.filter(pk=review.pk).exists())
+        report.refresh_from_db()
+        self.assertIsNone(report.review_id)
+        self.assertEqual(report.status, 'new')
+
+    def test_invalid_report_is_not_saved(self):
+        for reason in ['', '長' * 501]:
+            response = self.client.post(reverse('community:report_store', args=[self.store.pk]), {'reason': reason})
+            self.assertEqual(response.status_code, 200)
+            self.assertTrue(response.context['form'].errors)
+        self.assertFalse(Report.objects.exists())
+
+    def test_review_can_return_to_filtered_detail_and_rejects_external_return(self):
+        next_url = self.store.get_absolute_url() + '?q=口コミ&source=map'
+        response = self.client.post(reverse('community:review_create', args=[self.store.pk]), {'rating': 3, 'comment': 'テスト', 'next': next_url})
+        self.assertRedirects(response, next_url)
+        response = self.client.get(reverse('community:review_create', args=[self.store.pk]), {'next': 'https://example.invalid/'})
+        self.assertEqual(response.context['return_url'], self.store.get_absolute_url())
+
+    def test_delete_confirmation_preserves_safe_return_location(self):
+        review = self.create_review()
+        url = reverse('community:review_delete', args=[review.pk])
+        next_url = self.store.get_absolute_url() + '?q=口コミ&source=map'
+        response = self.client.get(url, {'next': next_url})
+        self.assertEqual(response.context['return_url'], next_url)
+        self.assertRedirects(self.client.post(url, {'next': next_url}), next_url)

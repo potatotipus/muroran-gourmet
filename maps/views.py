@@ -12,6 +12,7 @@ from restaurants.query import filter_restaurants, restaurant_queryset
 
 from .services import google_maps_urls, map_data
 from .forms import PersonalMapForm
+from config.http import local_destination
 
 
 @never_cache
@@ -33,6 +34,7 @@ def store(request, pk):
     return render(request, 'maps/store.html', {
         'restaurant': restaurant, 'map_data': map_data([restaurant]),
         'google_urls': google_maps_urls(restaurant),
+        'detail_url': local_destination(request, request.GET.get('back'), restaurant.get_absolute_url()),
     })
 
 
@@ -42,6 +44,7 @@ def directions(request, pk):
     restaurant = get_object_or_404(restaurant_queryset(request.user), pk=pk)
     return render(request, 'maps/directions.html', {
         'restaurant': restaurant, 'google_urls': google_maps_urls(restaurant),
+        'detail_url': local_destination(request, request.GET.get('back'), restaurant.get_absolute_url()),
     })
 
 

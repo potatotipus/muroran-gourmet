@@ -35,8 +35,8 @@
     </div>
   </div>
   <section class="store-actions" aria-label="このお店でできること">
-    <a class="button button-orange" href="{% url 'maps:store' restaurant.pk %}">地図を見る</a>
-    <a class="button button-orange" href="{% url 'maps:directions' restaurant.pk %}">バスで行く</a>
+    <a class="button button-orange" href="{% url 'maps:store' restaurant.pk %}?back={{ detail_return|urlencode }}">地図を見る</a>
+    <a class="button button-orange" href="{% url 'maps:directions' restaurant.pk %}?back={{ detail_return|urlencode }}">バスで行く</a>
     <a class="button button-orange" href="{% url 'community:review_create' restaurant.pk %}?next={{ detail_return|urlencode }}">口コミを投稿する</a>
     {% include 'community/includes/favorite_form.html' %}
     {% include 'visits/includes/visit_form.html' %}

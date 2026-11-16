@@ -16,7 +16,7 @@
     {% if form.is_valid %}
       {% if form.cleaned_data.q %}<span>「{{ form.cleaned_data.q }}」</span>{% endif %}
       {% if form.cleaned_data.genre %}<span>{{ form.cleaned_data.genre }}</span>{% endif %}
-      {% if form.cleaned_data.area %}<span>{{ form.cleaned_data.area }}</span>{% endif %}
+      {% if form.cleaned_data.area %}<span>{{ form.area_label }}</span>{% endif %}
       {% if form.cleaned_data.budget %}<span>{{ form.cleaned_data.budget }}円以内</span>{% endif %}
       {% for tag in form.cleaned_data.tags %}<span>{{ tag.name }}</span>{% endfor %}
     {% endif %}

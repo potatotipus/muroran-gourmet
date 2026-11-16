@@ -11,7 +11,12 @@
   }
   try {
     const data = JSON.parse(payload.textContent);
-    const map = L.map(canvas).setView(data.center, data.zoom);
+    const map = L.map(canvas, {zoomControl: false}).setView(data.center, data.zoom);
+    L.control.zoom({zoomInTitle: '拡大', zoomOutTitle: '縮小'}).addTo(map);
+    map.on('popupopen', (event) => {
+      const close = event.popup.getElement().querySelector('.leaflet-popup-close-button');
+      if (close) close.setAttribute('aria-label', '閉じる');
+    });
     const tiles = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 19,
       attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -30,7 +35,7 @@
       const pin = document.createElement('span');
       const color = ['red', 'green', 'blue'].includes(store.color) ? store.color : 'blue';
       pin.className = `map-pin-dot pin-${color}`;
-      const icon = L.divIcon({html: pin, className: 'store-map-marker', iconSize: [28, 36], iconAnchor: [14, 36]});
+      const icon = L.divIcon({html: pin, className: 'store-map-marker', iconSize: [44, 48], iconAnchor: [22, 44]});
       const marker = L.marker([store.latitude, store.longitude], {icon, title: store.name, keyboard: true}).addTo(map);
       marker.getElement().setAttribute('aria-label', `${store.name}の店舗ピン`);
       const popup = document.createElement('div');
@@ -48,7 +53,7 @@
       link.textContent = '店舗詳細を見る';
       link.className = 'map-popup-link';
       popup.append(link);
-      marker.bindPopup(popup);
+      marker.bindPopup(popup, {maxWidth: 250, autoPanPadding: [20, 20]});
       bounds.push([store.latitude, store.longitude]);
     }
     if (bounds.length === 1) map.setView(bounds[0], 16);
