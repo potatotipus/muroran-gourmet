@@ -1,0 +1,25 @@
+{% extends 'restaurants/base.html' %}
+
+{% block title %}条件検索 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page filter-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'restaurants:list' %}{% if query_string %}?{{ query_string }}{% endif %}">← 店舗一覧に戻る</a>
+  <p class="eyebrow">07 / FILTER</p><h1 class="page-title" id="page-title">条件検索</h1>
+  <p class="page-intro">今日の気分や予算に合う、一軒を。</p>
+  <form method="get" action="{% url 'restaurants:list' %}" class="filter-form">
+    {% if form.errors %}<div class="form-alert" role="alert">検索条件をご確認ください。</div>{% endif %}
+    {% for field in form %}
+      {% if field.name == 'tags' %}
+      <fieldset class="feature-options"><legend>{{ field.label }}</legend>{{ field }}
+        <p class="field-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{{ field.errors }}
+      </fieldset>
+      {% else %}
+      <div class="search-field">{{ field.label_tag }}{{ field }}{% if field.help_text %}<p class="field-help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</p>{% endif %}{{ field.errors }}</div>
+      {% endif %}
+    {% endfor %}
+    <p class="field-help">「夜遅くまで営業」は、営業時間と特徴が登録された店舗が対象です。現在営業中かどうかを示すものではありません。</p>
+    <button class="button button-search" type="submit">この条件で検索</button>
+    <a class="reset-link" href="{% url 'restaurants:filters' %}">条件をリセットする</a>
+  </form>
+</section>
+{% endblock %}

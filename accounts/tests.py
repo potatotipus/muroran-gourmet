@@ -170,7 +170,7 @@ class AccountFlowTests(TestCase):
                 url = reverse(name)
                 self.assertRedirects(self.client.get(url), reverse('accounts:login') + '?next=' + url)
 
-    def test_selection_links_to_both_placeholder_screens(self):
+    def test_selection_links_to_both_search_screens(self):
         self.client.force_login(self.user)
         response = self.client.get(reverse('accounts:choose'))
 
@@ -180,14 +180,17 @@ class AccountFlowTests(TestCase):
             self.assertContains(response, f'href="{reverse(name)}"')
         self.assertIn('no-store', response.headers['Cache-Control'])
 
-    def test_placeholders_are_available_only_after_login_and_can_return_home(self):
+    def test_search_screens_are_available_after_login_and_can_return_home(self):
         self.client.force_login(self.user)
         for name, title in [('restaurants:genres', 'ジャンル選択'), ('maps:search', 'マップ検索')]:
             with self.subTest(name=name):
                 response = self.client.get(reverse(name))
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, title)
-                self.assertContains(response, '現在準備中です。')
+                if name == 'maps:search':
+                    self.assertContains(response, '現在準備中です。')
+                else:
+                    self.assertContains(response, '料理のジャンル')
                 self.assertContains(response, f'href="{reverse("accounts:choose")}"')
                 self.assertIn('no-store', response.headers['Cache-Control'])
 

@@ -1,0 +1,49 @@
+{% extends 'restaurants/base.html' %}
+
+{% block title %}{{ restaurant.name }} | むろらんグルメマップ{% endblock %}
+{% block content %}
+<article class="restaurant-page detail-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'restaurants:list' %}{% if query_string %}?{{ query_string }}{% endif %}">← 検索結果に戻る</a>
+  <p class="eyebrow">09 / RESTAURANT</p>
+  {% if restaurant.is_demo %}<p class="demo-notice">架空のデモ店舗です。住所・位置・営業時間・メニューなどはデモ用の情報です。実際のお店の情報ではありません。</p>{% endif %}
+  <div class="detail-hero">
+    {% include 'restaurants/includes/image.html' %}
+    <div>
+      <p class="restaurant-meta">{{ restaurant.genre|default:'ジャンル未登録' }} / {{ restaurant.area|default:'エリア未登録' }}</p>
+      <h1 id="page-title" class="page-title">{{ restaurant.name }}</h1>
+      <p class="price-label">{{ restaurant.price_label }}</p>
+      {% include 'restaurants/includes/tags.html' %}
+      <div class="restaurant-description">{{ restaurant.description|default:'店舗説明はまだ登録されていません。'|linebreaks }}</div>
+    </div>
+  </div>
+  <div class="detail-columns">
+    <section class="detail-panel" aria-labelledby="info-title">
+      <h2 id="info-title">お店の基本情報</h2>
+      <dl class="restaurant-info">
+        <dt>ジャンル</dt><dd>{{ restaurant.genre|default:'未登録' }}</dd>
+        <dt>エリア</dt><dd>{{ restaurant.area|default:'未登録' }}</dd>
+        <dt>住所</dt><dd>{{ restaurant.address|default:'未登録' }}</dd>
+        <dt>営業時間</dt><dd>{{ restaurant.opening_hours|default:'未登録' }}</dd>
+        <dt>定休日</dt><dd>{{ restaurant.closed_days|default:'未登録' }}</dd>
+        <dt>価格帯・予算</dt><dd>{{ restaurant.price_label }}</dd>
+      </dl>
+      <p class="field-help">記載の営業時間は、現在の営業状況を示すものではありません。来店前に最新情報をご確認ください。</p>
+    </section>
+    <div class="detail-stories">
+      <section class="detail-panel"><h2>店主のこだわり</h2><div>{{ restaurant.owner_description|default:'まだ登録されていません。'|linebreaks }}</div></section>
+      <section class="detail-panel"><h2>おすすめメニュー</h2><div>{{ restaurant.recommended_menu|default:'まだ登録されていません。'|linebreaks }}</div></section>
+    </div>
+  </div>
+  <section class="future-actions" aria-labelledby="actions-title">
+    <h2 id="actions-title">このお店を、もっと。</h2>
+    <p>以下の機能は準備中です。お気に入りや訪問履歴はまだ保存できません。</p>
+    <div class="future-buttons">
+      <button type="button" disabled>地図を見る <small>準備中</small></button>
+      <button type="button" disabled>バスで行く <small>準備中</small></button>
+      <button type="button" disabled>口コミを見る・書く <small>準備中</small></button>
+      <button type="button" disabled>お気に入りに追加 <small>準備中</small></button>
+      <button type="button" disabled>訪問済みに登録 <small>準備中</small></button>
+    </div>
+  </section>
+</article>
+{% endblock %}

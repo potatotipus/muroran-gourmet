@@ -35,7 +35,7 @@ class HomeTests(SimpleTestCase):
         self.assertNotContains(response, '<form')
 
     def test_future_features_are_not_exposed(self):
-        for url in ['/restaurants/', '/maps/', '/community/', '/visits/']:
+        for url in ['/maps/', '/community/', '/visits/']:
             with self.subTest(url=url):
                 self.assertEqual(self.client.get(url).status_code, 404)
 

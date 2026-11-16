@@ -1,0 +1,3 @@
+<ul class="tag-list" aria-label="店舗の特徴">
+  {% for tag in restaurant.tags.all %}<li>{{ tag.name }}</li>{% empty %}<li class="tag-empty">特徴タグ未登録</li>{% endfor %}
+</ul>
