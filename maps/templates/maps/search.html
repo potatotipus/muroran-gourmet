@@ -1,0 +1,12 @@
+{% extends 'maps/base.html' %}
+{% block title %}マップ検索 | むろらんグルメマップ{% endblock %}
+{% block content %}
+<section class="restaurant-page map-page" aria-labelledby="page-title">
+  <a class="back-link" href="{% url 'accounts:choose' %}">← 探し方の選択へ</a>
+  <div class="page-heading"><div><p class="eyebrow">08 / MAP SEARCH</p><h1 id="page-title" class="page-title">地図から、お店を探す。</h1></div><a class="button filter-link" href="{% url 'restaurants:list' %}{% if query_string %}?{{ query_string }}{% endif %}">一覧で見る</a></div>
+  {% url 'maps:search' as search_action %}{% include 'restaurants/includes/search_form.html' %}
+  <p class="result-count">検索結果 <strong>{{ total_count }}</strong> 件 / 地図に {{ map_data.stores|length }} 件表示</p>
+  {% if missing_count %}<p class="field-help">{{ missing_count }}件は位置情報が未登録のため、地図には表示していません。</p>{% endif %}
+  {% include 'maps/includes/map.html' %}
+</section>
+{% endblock %}

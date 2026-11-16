@@ -1,0 +1,16 @@
+.map-page { --green: #b96316; }
+.map-canvas { width: 100%; height: 480px; border: 1px solid #d9d4c7; border-radius: 12px; background: #eee9de; z-index: 0; }
+.map-status { padding: 12px 16px; border-radius: 8px; background: #fff3df; font-size: .8rem; }
+.map-status[hidden] { display: none; }
+.map-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 20px 0; font-size: .75rem; }
+.legend-blue { color: #1761bc; }.legend-green { color: #00766a; }.legend-red { color: #b23b68; }
+.map-pin-dot { display: block; width: 28px; height: 28px; border: 3px solid #fff; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); box-shadow: 0 2px 6px #0004; }
+.pin-blue { background: #1761bc; }.pin-green { background: #00766a; }.pin-red { background: #ba3153; }
+.map-popup-link { display: inline-flex; align-items: center; min-height: 44px; font-size: .9rem; }
+.map-store-links { display: grid; gap: 12px; padding-left: 20px; font-size: .85rem; }
+.map-store-links a { display: inline-block; min-height: 44px; padding-block: 10px; }
+.map-store-links small { color: var(--muted); }
+.route-page { max-width: 660px; }
+.route-links { display: grid; gap: 16px; margin-top: 24px; }
+.route-button { margin-top: 16px; color: white; background: #b96316; border-color: #b96316; }
+@media (max-width: 760px) { .map-canvas { height: 400px; } }

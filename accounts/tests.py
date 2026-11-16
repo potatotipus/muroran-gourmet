@@ -188,7 +188,7 @@ class AccountFlowTests(TestCase):
                 self.assertEqual(response.status_code, 200)
                 self.assertContains(response, title)
                 if name == 'maps:search':
-                    self.assertContains(response, '現在準備中です。')
+                    self.assertContains(response, '地図から、お店を探す。')
                 else:
                     self.assertContains(response, '料理のジャンル')
                 self.assertContains(response, f'href="{reverse("accounts:choose")}"')

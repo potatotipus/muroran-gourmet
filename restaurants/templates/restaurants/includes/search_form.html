@@ -1,0 +1,9 @@
+<form method="get" class="quick-search" action="{{ search_action }}">
+  <div class="search-field">{{ form.q.label_tag }}{{ form.q }}</div>
+  <div class="search-field">{{ form.genre.label_tag }}{{ form.genre }}</div>
+  {% if form.budget.value %}<input type="hidden" name="budget" value="{{ form.budget.value }}">{% endif %}
+  {% if form.area.value %}<input type="hidden" name="area" value="{{ form.area.value }}">{% endif %}
+  {% for tag in form.tags.value %}<input type="hidden" name="tags" value="{{ tag }}">{% endfor %}
+  <button class="button button-search" type="submit">検索する</button>
+</form>
+{% if form.errors %}<div class="form-alert" role="alert">検索条件をご確認ください。{% for field in form %}{% if field.errors %}<div>{{ field.label }}{{ field.errors }}</div>{% endif %}{% endfor %}</div>{% endif %}
