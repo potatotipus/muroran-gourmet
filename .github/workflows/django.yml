@@ -7,6 +7,8 @@ permissions:
 
 jobs:
   test:
+    env:
+      PYTHONIOENCODING: utf-8
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest]
@@ -26,4 +28,4 @@ jobs:
           python manage.py makemigrations --check --dry-run
           python manage.py migrate --noinput
       - name: 基本テスト
-        run: python manage.py test --verbosity 2
+        run: python scripts/run_ci_tests.py

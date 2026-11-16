@@ -49,6 +49,15 @@
 - 読みやすいポイント表記、地図の44pxタップ領域、戻り先維持を調整。調整後の最終ブラウザ再確認も成功（`/tmp/muroran-complete-browser-final/report.json`）。
 - READMEをPowerShell向けに更新。Windows用tzdataを取得確認済み。CIにUbuntu/Windows行列を追加したが、まだその結果は未確認。
 
+### Windows CIの診断
+
+最初のCIはUbuntu成功・Windowsの依存導入とマイグレーション成功・Windowsテスト失敗。
+既存の設定テストが子プロセスの日本語エラーをOS既定のエンコーディングで扱う問題を、
+`PYTHONIOENCODING=ascii` で同テストを実行して再現した。
+子プロセスの出力と読み取りをUTF-8に固定し、CIのテスト出力も統一した。
+失敗時にChecksの注釈へ詳細を残すラッパーを追加した（終了コードはそのまま返す）。
+修正後のWindows CI確認が必要。
+
 ## 主な設計
 
 - Restaurant / Genre / Tag と既存の検索条件は再利用し、他アプリに店舗情報をコピーしない。
