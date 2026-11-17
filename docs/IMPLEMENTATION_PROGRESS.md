@@ -133,3 +133,23 @@ python3 scripts/browser_smoke.py --require-osm --artifacts /workspace/scratch/mu
   この追加確認も一時DBのみを使用。画像・公開タイルの確認情報はクラウド内の `/workspace/scratch/muroran-live-map-inspection/` に保存した。
 - 今回はアプリのコード・モデル・マイグレーションの変更なし。前節で残した「実地図の確認」は完了。
 - 再開時の注意：同じクラウドで通常実行がNSS初期化エラーになる場合は、承認済みの証明書ストアを参照できる実行条件を使う。成功確認はHTTPの状態だけでなく `--require-osm` と取得画像を照合する。
+
+## スマートフォン確認用の公開準備（2026-11-17）
+
+- ユーザーはURLで動作確認することを希望し、PythonAnywhereのユーザー名 `Shimohira` を提供した。
+- 作業ブランチ：`feat/pythonanywhere-preview`。PR #5マージ済みの最新 `main`、`237db0d` が基点。
+- GitHub PagesではDjangoの認証・投稿を動かせないため、SQLiteを保持できるPythonAnywhere向けに準備する。
+- この環境のプレビュー公開ポータルは提供されていない。PythonAnywhereのログイン・API認証も接続されていないため、外部サービスへの配置完了を実施済みとは扱わない。
+- 非公開リポジトリの認証情報を渡さず配置できる、秘密設定・DBを含まないZIPを渡す。
+- `config/settings_public.py` と公開WSGIを分離。DEBUG無効、ホスト制限、HTTPS・Cookie・CSRF、開発用DBと別の `public-data/` を設定。
+- `scripts/prepare_public_preview.py` で秘密鍵作成・マイグレーション・デモ投入・静的ファイル収集・Web設定用WSGI生成を行う。既存の秘密鍵・DBは保持。
+- 公開準備テスト3件成功。一時コピーのHTTPS環境での登録・口コミ・お気に入り・訪問、異なるOriginの拒否、データと秘密鍵の保持、開発DBの非変更を確認。
+- 予定URL：`https://shimohira.pythonanywhere.com/`。アカウント側のWeb設定と公開後の動作確認はこれから。
+- 全Djangoテスト132件成功。システムチェック・マイグレーション差分・依存関係チェック・差分の書式チェックも成功。
+- 公開プロフィールでは外部の地図画像へOriginを送れるReferrer-Policyを使用し、検索条件等のURL全体は外部へ送らない。
+- Windows/UbuntuのCIでも132件成功（コードコミット `a8351e9`、実行 `44020637677`）。
+- ソースのみのZIPを作成し、秘密設定・DB・仮想環境がないことを検査。ZIPを一時フォルダーに展開し、公開準備コマンド・DB作成・静的ファイル収集が成功した。HSTSプリロードの `security.W021` は試用用の意図した警告で、公開手順に説明済み。
+- 配布ファイル：クラウド内 `/workspace/scratch/muroran-gourmet-preview.zip`（約200KB）。
+- PR #6：https://github.com/potatotipus/muroran-gourmet/pull/6
+- 状態：コード・テスト・ZIP・公開手順の準備は完了。外部サービスへのアップロード・Webアプリ設定・Reload・実際の公開URLでの確認は未実施。
+- 再開時：この節と `git status` を確認。ユーザーがZIPをPythonAnywhereの `/home/Shimohira/` にアップロード後、[公開手順](PUBLIC_PREVIEW.md) のBashコマンド・Web設定を案内する。パスワードやAPIトークンをチャットに要求しない。
