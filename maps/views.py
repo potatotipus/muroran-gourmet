@@ -31,10 +31,15 @@ def search(request):
 @login_required
 def store(request, pk):
     restaurant = get_object_or_404(restaurant_queryset(request.user), pk=pk)
+    detail_url = local_destination(request, request.GET.get('back'), restaurant.get_absolute_url())
+    data = map_data([restaurant])
+    # 上部の戻るリンクとピンで、検索条件・元の画面を含む同じURLを使う。
+    for store in data['stores']:
+        store['detail_url'] = detail_url
     return render(request, 'maps/store.html', {
-        'restaurant': restaurant, 'map_data': map_data([restaurant]),
+        'restaurant': restaurant, 'map_data': data,
         'google_urls': google_maps_urls(restaurant),
-        'detail_url': local_destination(request, request.GET.get('back'), restaurant.get_absolute_url()),
+        'detail_url': detail_url,
     })
 
 

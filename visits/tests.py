@@ -22,13 +22,32 @@ class VisitTests(TestCase):
 
     def test_repeated_add_does_not_duplicate_or_change_registration_time(self):
         url = reverse('visits:update', args=[self.store.pk])
-        self.assertRedirects(self.client.post(url, {'action': 'add'}), self.store.get_absolute_url())
+        self.assertRedirects(self.client.post(url, {'action': 'add'}), reverse('maps:personal'))
         first = Visit.objects.get(user=self.user)
-        self.client.post(url, {'action': 'add'})
+        self.assertRedirects(self.client.post(url, {'action': 'add'}), reverse('maps:personal'))
         self.assertEqual(Visit.objects.count(), 1)
         self.assertEqual(Visit.objects.get().visited_at, first.visited_at)
         self.assertEqual(visit_summary(self.user)['points'], 10)
         self.assertEqual(visit_summary(self.user)['stamp_count'], 1)
+
+    def test_visit_registration_opens_personal_map_even_with_detail_return_url(self):
+        response = self.client.post(reverse('visits:update', args=[self.store.pk]), {
+            'action': 'add', 'next': self.store.get_absolute_url() + '?q=訪問&budget=1000',
+        })
+        self.assertRedirects(response, reverse('maps:personal'))
+        personal = self.client.get(response.url)
+        self.assertEqual(personal.context['record_count'], 1)
+        self.assertEqual(visit_summary(self.user)['points'], 10)
+
+    def test_visit_removal_returns_to_detail_or_history_and_updates_points(self):
+        for destination in [self.store.get_absolute_url() + '?q=訪問&budget=1000', reverse('visits:history')]:
+            with self.subTest(destination=destination):
+                Visit.objects.create(user=self.user, restaurant=self.store)
+                response = self.client.post(reverse('visits:update', args=[self.store.pk]), {
+                    'action': 'remove', 'next': destination,
+                })
+                self.assertRedirects(response, destination)
+                self.assertEqual(visit_summary(self.user)['points'], 0)
 
     def test_distinct_stores_increase_points_and_removal_decreases_them(self):
         for store in [self.store, self.another]:
@@ -84,7 +103,8 @@ class VisitTests(TestCase):
         client.force_login(self.user)
         self.assertEqual(client.post(url, {'action': 'add'}).status_code, 403)
         self.assertFalse(Visit.objects.exists())
-        self.assertRedirects(self.client.post(url, {'action': 'add', 'next': 'https://example.invalid/'}), self.store.get_absolute_url())
+        self.assertRedirects(self.client.post(url, {'action': 'add', 'next': 'https://example.invalid/'}), reverse('maps:personal'))
+        self.assertRedirects(self.client.post(url, {'action': 'remove', 'next': 'https://example.invalid/'}), self.store.get_absolute_url())
 
     def test_visits_screens_and_updates_require_login_and_unknown_store_is_404(self):
         self.assertEqual(self.client.post(reverse('visits:update', args=[99999]), {'action': 'add'}).status_code, 404)
