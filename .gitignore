@@ -63,6 +63,9 @@ db.sqlite3
 db.sqlite3-journal
 db.sqlite3-wal
 db.sqlite3-shm
+.public-config.json
+.pythonanywhere-wsgi.py
+public-data/
 staticfiles/
 media/
 browser-artifacts/

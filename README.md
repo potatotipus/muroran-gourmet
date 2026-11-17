@@ -17,6 +17,9 @@ Python / Django / SQLite とテンプレートによるサーバーサイドレ�
 全画面で共通ヘッダー・下部ナビを利用します。ゲスト利用はありません。
 認証モデルと既存DBを差し替えず、店舗のデータは `restaurants` で一元管理しています。
 
+スマートフォンからURLで利用する場合は、[PythonAnywhereへの公開手順](docs/PUBLIC_PREVIEW.md)を参照してください。
+公開用設定はローカル開発と分離し、Djangoのログイン・投稿・SQLiteの保存をそのまま利用します。
+
 ## Windows 11 / VS Code / PowerShell での起動
 
 Python 3.12 と Git を用意してください。DBサーバー・Node.js・APIキーは不要です。
