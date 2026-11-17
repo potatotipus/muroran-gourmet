@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseBadRequest
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_POST
 
@@ -23,9 +23,9 @@ def update(request, restaurant_pk):
     if form.cleaned_data['action'] == 'add':
         _, created = Visit.objects.get_or_create(user=request.user, restaurant=restaurant)
         messages.success(request, '訪問済み（自己申告）に登録しました。' if created else 'このお店は訪問済みとして登録されています。')
-    else:
-        Visit.objects.filter(user=request.user, restaurant=restaurant).delete()
-        messages.success(request, '訪問登録を解除しました。対応するスタンプ・ポイントも減少します。')
+        return redirect('maps:personal')
+    Visit.objects.filter(user=request.user, restaurant=restaurant).delete()
+    messages.success(request, '訪問登録を解除しました。対応するスタンプ・ポイントも減少します。')
     return redirect_back(request, restaurant.get_absolute_url())
 
 

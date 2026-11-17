@@ -26,7 +26,8 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def run_checks(root, artifacts, tile_mode):
     errors = []
-    report = {'real_osm_loaded': None, 'tile_mode': tile_mode, 'functional_flow': False, 'viewport_checks': []}
+    report = {'real_osm_loaded': None, 'real_osm_screens': {}, 'tile_mode': tile_mode,
+              'functional_flow': False, 'viewport_checks': []}
     fixture = BytesIO()
     Image.new('RGB', (256, 256), '#edeae3').save(fixture, 'PNG')
     with sync_playwright() as playwright:
@@ -51,6 +52,21 @@ def run_checks(root, artifacts, tile_mode):
 
         def shot(name):
             page.screenshot(path=str(artifacts / f'{name}.png'), full_page=True)
+
+        def check_real_map(screen):
+            if tile_mode != 'auto':
+                return
+            all_tiles_loaded = """() => {
+                const tiles = [...document.querySelectorAll('.leaflet-tile')];
+                return tiles.length > 0 && tiles.every(tile => tile.complete && tile.naturalWidth > 0);
+            }"""
+            page.wait_for_function("""() => {
+                const tiles = [...document.querySelectorAll('.leaflet-tile')];
+                return (tiles.length > 0 && tiles.every(tile => tile.complete && tile.naturalWidth > 0))
+                    || document.getElementById('map-status').textContent.includes('背景地図');
+            }""", timeout=15000)
+            report['real_osm_screens'][screen] = page.evaluate(all_tiles_loaded)
+            report['real_osm_loaded'] = len(report['real_osm_screens']) == 3 and all(report['real_osm_screens'].values())
 
         def nav(name):
             page.get_by_role('navigation', name='メインナビゲーション').get_by_role('link', name=name, exact=True).click()
@@ -78,6 +94,7 @@ def run_checks(root, artifacts, tile_mode):
         assert page.locator('.restaurant-card').count() == 10
         shot('06-list')
         page.get_by_role('link', name=re.compile('条件で絞り込む')).click()
+        page.get_by_label(re.compile('^店舗名・キーワード')).fill('サンプルカレー店02')
         page.get_by_label(re.compile('^予算')).select_option('1000')
         page.get_by_label(re.compile('^ジャンル')).select_option('curry')
         page.get_by_label(re.compile('^エリア')).select_option('中島')
@@ -85,15 +102,11 @@ def run_checks(root, artifacts, tile_mode):
         shot('07-filters')
         page.get_by_role('button', name='この条件で検索').click()
         assert page.locator('.restaurant-card').count() == 1
+        filtered_query = parse_qs(urlsplit(page.url).query)
         page.get_by_role('link', name='地図で見る', exact=True).click()
         page.wait_for_selector('.store-map-marker')
-        if tile_mode == 'auto':
-            page.wait_for_function("document.querySelector('.leaflet-tile-loaded') || document.getElementById('map-status').textContent.includes('背景地図')", timeout=15000)
-            report['real_osm_loaded'] = bool(page.locator('.leaflet-tile-loaded').count())
+        check_real_map('08')
         shot('08-map-real-or-error')
-        # 以後の多数の画面検証は固定のテスト画像を使い、外部タイルを繰り返し取得しない。
-        if tile_mode == 'auto':
-            page.route('https://tile.openstreetmap.org/**', fixture_tiles)
         page.get_by_role('button', name='サンプルカレー店02の店舗ピン', exact=True).click()
         page.get_by_role('link', name='店舗詳細を見る', exact=True).click()
         assert page.get_by_role('heading', name='サンプルカレー店02', exact=True).is_visible()
@@ -104,9 +117,20 @@ def run_checks(root, artifacts, tile_mode):
         page.wait_for_selector('.store-map-marker')
         place_url = page.get_by_role('link', name='Googleマップで開く（外部サイト）').get_attribute('href')
         assert parse_qs(urlsplit(place_url).query)['api'] == ['1']
-        shot('10-store-map-fixture')
+        check_real_map('10')
+        shot('10-store-map-real-or-error')
         page.get_by_role('link', name='← 店舗詳細へ').click()
         assert page.url == detail_url
+        page.get_by_role('link', name='地図を見る', exact=True).click()
+        page.get_by_role('button', name='サンプルカレー店02の店舗ピン', exact=True).click()
+        page.get_by_role('link', name='店舗詳細を見る', exact=True).click()
+        assert page.url == detail_url
+        page.get_by_role('link', name='← 地図に戻る', exact=True).click()
+        assert urlsplit(page.url).path == '/maps/search/'
+        assert parse_qs(urlsplit(page.url).query) == filtered_query
+        page.get_by_role('button', name='サンプルカレー店02の店舗ピン', exact=True).click()
+        page.get_by_role('link', name='店舗詳細を見る', exact=True).click()
+        report['search_context_preserved'] = True
         page.get_by_role('link', name='バスで行く', exact=True).click()
         for name, mode in [('公共交通機関の経路を確認（Googleマップ）', 'transit'), ('徒歩の経路を確認（Googleマップ）', 'walking')]:
             url = page.get_by_role('link', name=name, exact=True).get_attribute('href')
@@ -127,6 +151,15 @@ def run_checks(root, artifacts, tile_mode):
         assert '3.0' in page.locator('.reviews-section').inner_text()
         page.get_by_role('button', name='お気に入りに追加', exact=True).click()
         page.get_by_role('button', name='訪問済みに登録', exact=True).click()
+        page.wait_for_url('**/maps/mine/')
+        data = json.loads(page.locator('#map-data').text_content())
+        assert len(data['stores']) == 1 and data['stores'][0]['is_visited']
+        check_real_map('16')
+        shot('16-personal-map-real-or-error')
+        report['visit_registration_opens_personal_map'] = True
+        # 実背景を08・10・16で確認後、多数の画面検証には固定画像を使う。
+        if tile_mode == 'auto':
+            page.route('https://tile.openstreetmap.org/**', fixture_tiles)
         nav('スタンプ')
         assert page.locator('.summary-grid strong').all_text_contents() == ['1', '1', '10']
         shot('13-stamps')
