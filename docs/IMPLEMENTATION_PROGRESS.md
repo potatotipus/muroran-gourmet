@@ -106,13 +106,30 @@ QR/GPS認証・ポイント交換・予約・メール到達確認／パスワ�
 - `python3 scripts/browser_smoke.py --require-osm --artifacts /tmp/muroran-navigation-fixes-browser` を実行。
   検索条件を保った地図・詳細の往復、訪問登録直後の16への移動、口コミCRUD、お気に入り、ポイント増減、プロフィール、認証・利用者分離、320/390/768/1440pxでの操作が成功。
   `functional_flow`・`search_context_preserved`・`visit_registration_opens_personal_map`・`migration_preserved` はすべて `true`。
-- 実背景の取得は08・10・16すべて未成功。Chromium単体で `net::ERR_CERT_AUTHORITY_INVALID` を確認し、同じURLへのcurlはHTTP 200。
-  このため `--require-osm` の終了結果は失敗であり、ブラウザ検証全体の成功とは報告しない。
-- OSで信頼済みの環境CAをユーザーのChromium/NSSストアに追加する操作は、自動承認レビューで拒否された。理由は永続的な信頼設定の変更が明示承認されていないこと。
-  証明書の追加・検証無効化は行っていない。外部の実地図確認は未完了として残す。
+- 承認前の実背景の取得は08・10・16すべて未成功。Chromium単体で `net::ERR_CERT_AUTHORITY_INVALID` を確認し、同じURLへのcurlはHTTP 200。
+  この時点の `--require-osm` の終了結果は失敗。承認後の解消結果は次節を参照。
+- 当初、OSで信頼済みの環境CAをユーザーのChromium/NSSストアに追加する操作は、自動承認レビューで拒否された。理由は永続的な信頼設定の変更が明示承認されていないこと。
+  この時点では証明書の追加を行わず、ユーザーの承認を待った。
 - READMEに修正後の遷移・各地図の背景取得結果の読み方を追記し、古い実装ブランチへの切り替え手順を削除した。
 - コードのコミット：`efff0fc`。GitHub Actionsのpush実行 `44014623540` はUbuntu/Windowsとも成功（各129件）。
   https://github.com/potatotipus/muroran-gourmet/actions/runs/44014623540
 - PR #5を作成済み：https://github.com/potatotipus/muroran-gourmet/pull/5
 - 状態：アプリ修正・回帰テスト・主要操作の検証・README更新・コミット・push・PR作成まで完了。マージと環境の公開は実行していない。
-- 再開時：`git status` とPR #5のChecksを確認する。アプリのテストは成功済み。残る実地図の確認で環境CAを永続登録する場合は、ユーザーの明示承認が必要。
+- 再開時：`git status` とPR #5のChecks、次節の地図追加確認を参照する。
+
+## 地図背景の追加確認（2026-11-17・ユーザー承認後）
+
+- ユーザーの「追加して大丈夫です」という明示承認を受け、環境CAの登録処理を実行した。同じ証明書は既存の名前ですでにNSSに登録されており、重複登録はない。
+- 通常の検証実行ではChromiumがNSSの永続データベースを初期化できず、エラー `-8126` が発生していた。ストアを参照できる権限で検証プロセスを実行するとHTTPS接続が成功した。
+- 証明書検証を有効にしたまま、次のブラウザ検証が終了コード0で成功した。
+
+```bash
+python3 scripts/browser_smoke.py --require-osm --artifacts /workspace/scratch/muroran-map-verification-approved
+```
+
+- `real_osm_loaded: true`、`real_osm_screens: {"08": true, "10": true, "16": true}` を確認。
+- 検索条件の保持、訪問登録後の16への遷移、既存の認証・口コミ・お気に入り・ポイント・利用者分離も成功。320/390/768/1440pxで13の保護画面を確認し、JavaScriptエラーなし。
+- 取得した画像を別途照合し、拡大・画像表示が完了した08・10・16を撮影。背景の道路・地区名、青ピン・お気に入り優先の赤ピン、OpenStreetMapの帰属を目視確認した。
+  この追加確認も一時DBのみを使用。画像・公開タイルの確認情報はクラウド内の `/workspace/scratch/muroran-live-map-inspection/` に保存した。
+- 今回はアプリのコード・モデル・マイグレーションの変更なし。前節で残した「実地図の確認」は完了。
+- 再開時の注意：同じクラウドで通常実行がNSS初期化エラーになる場合は、承認済みの証明書ストアを参照できる実行条件を使う。成功確認はHTTPの状態だけでなく `--require-osm` と取得画像を照合する。
