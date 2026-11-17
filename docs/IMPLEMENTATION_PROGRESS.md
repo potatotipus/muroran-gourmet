@@ -147,4 +147,9 @@ python3 scripts/browser_smoke.py --require-osm --artifacts /workspace/scratch/mu
 - 予定URL：`https://shimohira.pythonanywhere.com/`。アカウント側のWeb設定と公開後の動作確認はこれから。
 - 全Djangoテスト132件成功。システムチェック・マイグレーション差分・依存関係チェック・差分の書式チェックも成功。
 - 公開プロフィールでは外部の地図画像へOriginを送れるReferrer-Policyを使用し、検索条件等のURL全体は外部へ送らない。
-- 再開時：この節と `git status` を確認し、ZIP内容の確認・PR作成を続ける。ユーザー側の最後の設定は [公開手順](PUBLIC_PREVIEW.md) を参照。
+- Windows/UbuntuのCIでも132件成功（コードコミット `a8351e9`、実行 `44020637677`）。
+- ソースのみのZIPを作成し、秘密設定・DB・仮想環境がないことを検査。ZIPを一時フォルダーに展開し、公開準備コマンド・DB作成・静的ファイル収集が成功した。HSTSプリロードの `security.W021` は試用用の意図した警告で、公開手順に説明済み。
+- 配布ファイル：クラウド内 `/workspace/scratch/muroran-gourmet-preview.zip`（約200KB）。
+- PR #6：https://github.com/potatotipus/muroran-gourmet/pull/6
+- 状態：コード・テスト・ZIP・公開手順の準備は完了。外部サービスへのアップロード・Webアプリ設定・Reload・実際の公開URLでの確認は未実施。
+- 再開時：この節と `git status` を確認。ユーザーがZIPをPythonAnywhereの `/home/Shimohira/` にアップロード後、[公開手順](PUBLIC_PREVIEW.md) のBashコマンド・Web設定を案内する。パスワードやAPIトークンをチャットに要求しない。
